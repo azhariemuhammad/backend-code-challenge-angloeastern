@@ -1,9 +1,11 @@
 using ShipManagement.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace ShipManagement.Data
 {
-    public class ShipManagementContext : DbContext
+    public class ShipManagementContext : IdentityDbContext<IdentityUser>
     {
         public DbSet<Ship> Ships { get; set; }
         public DbSet<User> Users { get; set; }
@@ -12,6 +14,8 @@ namespace ShipManagement.Data
         public ShipManagementContext(DbContextOptions<ShipManagementContext> options) : base(options) { }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
             modelBuilder.Entity<UserShip>()
                 .HasKey(us => new { us.UserId, us.ShipId });
 
