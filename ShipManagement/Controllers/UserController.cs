@@ -1,5 +1,6 @@
 using ShipManagement.Models;
 using ShipManagement.Data;
+using ShipManagement.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
@@ -11,11 +12,18 @@ namespace ShipManagement.Controllers
     // [Authorize]
     public class UserController : ControllerBase
     {
-        private readonly ShipManagementContext _context;
+        private readonly IUserService _userService;
 
-        public UserController(ShipManagementContext context)
+        public UserController(IUserService userService)
         {
-            _context = context;
+            _userService = userService;
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        {
+            var users = await _userService.GetUsersDtoAsync();
+            return Ok(users);
         }
 
         [HttpPost]
@@ -26,29 +34,20 @@ namespace ShipManagement.Controllers
                 return BadRequest(ModelState);
             }
 
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
-
+            await _userService.CreateUserAsync(user);
             return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetUser(int id)
         {
-            var user = await _context.Users.FindAsync(id);
+            var user = await _userService.GetUserDtoByIdAsync(id);
             if (user == null)
             {
                 return NotFound();
             }
 
             return Ok(user);
-        }
-
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
-        {
-            var users = await _context.Users.ToListAsync();
-            return Ok(users);
         }
     }
 }

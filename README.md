@@ -16,10 +16,10 @@ Challenge delivery time should not be longer than a week.
 1. As a consumer of the API, I want to be able to add users to the system. ✅
 2. As a consumer of the API, I want to be able to see all users in the system. ✅
 3. As a consumer of the API, I want to be able to update ships assigned to a user.
-4. As a consumer of the API, I want to be able to add ships to the system.
-5. As a consumer of the API, I want to be able to see all ships in the system.
-6. As a consumer of the API, I want to be able to see ships assigned to a specific user.
-7. As a consumer of the API, I want to be able to see ships unassigned in the system.
+4. As a consumer of the API, I want to be able to add ships to the system. ✅
+5. As a consumer of the API, I want to be able to see all ships in the system. ✅
+6. As a consumer of the API, I want to be able to see ships assigned to a specific user. ✅
+7. As a consumer of the API, I want to be able to see ships unassigned in the system. ✅
 8. As a consumer of the API, I want to be able to update velocity of a ship.
 9. As a consumer of the API, I want to be able to see the closest port to a ship with estimated arrival time to the port together with relevant details.
 

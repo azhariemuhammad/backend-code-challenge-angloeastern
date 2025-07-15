@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using ShipManagement.Data;
 using System.Text;
+using ShipManagement.Interfaces;
+using ShipManagement.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,6 +39,10 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
     };
 });
+
+builder.Services.AddScoped<IShipService, ShipService>();
+builder.Services.AddScoped<IUserService, UserService>();
+
 
 
 var app = builder.Build();
