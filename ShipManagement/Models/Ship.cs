@@ -1,11 +1,11 @@
 using System.ComponentModel.DataAnnotations;
+using ShipManagement.Models.Attributes;
 
 namespace ShipManagement.Models
 {
     public class Ship
     {
         public int Id { get; set; }
-        [Required]
         public string ShipId { get; set; } = string.Empty;
         [Required]
         public string Name { get; set; } = string.Empty;

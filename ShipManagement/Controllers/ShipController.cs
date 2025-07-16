@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using ShipManagement.Interfaces;
 using ShipManagement.Models;
+using ShipManagement.Models.Attributes;
 using ShipManagement.Models.DTOs;
 using ShipManagement.Services;
 
@@ -49,6 +50,43 @@ namespace ShipManagement.Controllers
             await _shipSerivce.AssignedUser(userId, shipId);
 
             return Ok(new { UserId = userId, ShipId = shipId });
+        }
+
+        // [HttpPut]
+        // [Route("unassigned/{shipId}")]
+        // public async Task<ActionResult<ShipBasicDto>> UnassigneUserShip(int shipId, Ship ship)
+        // {
+        //     if (!ModelState.IsValid)
+        //     {
+        //         return BadRequest(ModelState);
+        //     }
+
+        //     var updatedShip = await _shipSerivce.UnassignedUser(shipId, ship);
+        //     if (updatedShip == null)
+        //     {
+        //         return NotFound();
+        //     }
+
+        //     return Ok(updatedShip);
+        // }
+
+        [HttpPut]
+        [Route("{shipId}")]
+        [RequiredValidShipId]
+        public async Task<ActionResult<ShipBasicDto>> UpdateShip(string shipId, Ship ship)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var updatedShip = await _shipSerivce.UpdateShipAsync(shipId, ship);
+            if (updatedShip == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(updatedShip);
         }
 
         [HttpGet]

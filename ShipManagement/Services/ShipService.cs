@@ -120,5 +120,34 @@ namespace ShipManagement.Services
                 })
                 .ToListAsync();
         }
+
+        public async Task<ShipBasicDto> UpdateShipAsync(string shipId, Ship ship)
+        {
+            var existingShip = await _context.Ships.Where(s => s.ShipId == shipId).FirstOrDefaultAsync();
+            if (existingShip == null)
+            {
+                throw new KeyNotFoundException($"Ship with ID {shipId} not found.");
+            }
+
+            existingShip.ShipId = ship.ShipId;
+            existingShip.Name = ship.Name;
+            existingShip.Velocity = ship.Velocity;
+            existingShip.Latitude = ship.Latitude;
+            existingShip.Longitude = ship.Longitude;
+
+            _context.Ships.Update(existingShip);
+            await _context.SaveChangesAsync();
+
+            return new ShipBasicDto
+            {
+                Id = existingShip.Id,
+                ShipId = existingShip.ShipId,
+                Name = existingShip.Name,
+                Velocity = existingShip.Velocity,
+                Latitude = existingShip.Latitude,
+                Longitude = existingShip.Longitude
+            };
+        }
     }
+
 }
