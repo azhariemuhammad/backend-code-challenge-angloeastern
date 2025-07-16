@@ -56,7 +56,7 @@ namespace ShipManagement.Services
                 .Select(s => new ShipBasicDto
                 {
                     Id = s.Id,
-                    ShipId = s.ShipId,
+                    ShipCode = s.ShipCode,
                     Name = s.Name,
                     Velocity = s.Velocity,
                     Latitude = s.Latitude,
@@ -72,7 +72,7 @@ namespace ShipManagement.Services
                 .Select(s => new ShipBasicDto
                 {
                     Id = s.Id,
-                    ShipId = s.ShipId,
+                    ShipCode = s.ShipCode,
                     Name = s.Name,
                     Velocity = s.Velocity,
                     Latitude = s.Latitude,
@@ -88,7 +88,7 @@ namespace ShipManagement.Services
                 .Select(s => new ShipDetailDto
                 {
                     Id = s.Id,
-                    ShipId = s.ShipId,
+                    ShipCode = s.ShipCode,
                     Name = s.Name,
                     Velocity = s.Velocity,
                     Latitude = s.Latitude,
@@ -112,7 +112,7 @@ namespace ShipManagement.Services
                 .Select(s => new ShipBasicDto
                 {
                     Id = s.Id,
-                    ShipId = s.ShipId,
+                    ShipCode = s.ShipCode,
                     Name = s.Name,
                     Velocity = s.Velocity,
                     Latitude = s.Latitude,
@@ -121,15 +121,15 @@ namespace ShipManagement.Services
                 .ToListAsync();
         }
 
-        public async Task<ShipBasicDto> UpdateShipAsync(string shipId, Ship ship)
+        public async Task<ShipBasicDto> UpdateShipAsync(string shipCode, Ship ship)
         {
-            var existingShip = await _context.Ships.Where(s => s.ShipId == shipId).FirstOrDefaultAsync();
+            var existingShip = await _context.Ships.Where(s => s.ShipCode == shipCode).FirstOrDefaultAsync();
             if (existingShip == null)
             {
-                throw new KeyNotFoundException($"Ship with ID {shipId} not found.");
+                throw new KeyNotFoundException($"Ship with code {shipCode} not found.");
             }
 
-            existingShip.ShipId = ship.ShipId;
+            existingShip.ShipCode = ship.ShipCode;
             existingShip.Name = ship.Name;
             existingShip.Velocity = ship.Velocity;
             existingShip.Latitude = ship.Latitude;
@@ -141,7 +141,7 @@ namespace ShipManagement.Services
             return new ShipBasicDto
             {
                 Id = existingShip.Id,
-                ShipId = existingShip.ShipId,
+                ShipCode = existingShip.ShipCode,
                 Name = existingShip.Name,
                 Velocity = existingShip.Velocity,
                 Latitude = existingShip.Latitude,

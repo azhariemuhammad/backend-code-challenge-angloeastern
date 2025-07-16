@@ -37,7 +37,7 @@ namespace ShipManagement.Services
                     .Select(us => new ShipBasicDto
                     {
                         Id = us.Ship.Id,
-                        ShipId = us.Ship.ShipId,
+                        ShipCode = us.Ship.ShipCode,
                         Name = us.Ship.Name,
                         Velocity = us.Ship.Velocity,
                         Latitude = us.Ship.Latitude,
@@ -63,7 +63,7 @@ namespace ShipManagement.Services
                     .Select(us => new ShipBasicDto
                     {
                         Id = us.Ship.Id,
-                        ShipId = us.Ship.ShipId,
+                        ShipCode = us.Ship.ShipCode,
                         Name = us.Ship.Name,
                         Velocity = us.Ship.Velocity,
                         Latitude = us.Ship.Latitude,
@@ -88,7 +88,7 @@ namespace ShipManagement.Services
                     AssignedShips = u.UserShips.Select(us => new ShipBasicDto
                     {
                         Id = us.Ship.Id,
-                        ShipId = us.Ship.ShipId,
+                        ShipCode = us.Ship.ShipCode,
                         Name = us.Ship.Name,
                         Velocity = us.Ship.Velocity,
                         Latitude = us.Ship.Latitude,

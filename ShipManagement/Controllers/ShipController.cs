@@ -71,16 +71,16 @@ namespace ShipManagement.Controllers
         // }
 
         [HttpPut]
-        [Route("{shipId}")]
+        [Route("{shipCode}")]
         [RequiredValidShipId]
-        public async Task<ActionResult<ShipBasicDto>> UpdateShip(string shipId, Ship ship)
+        public async Task<ActionResult<ShipBasicDto>> UpdateShip(string shipCode, Ship ship)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var updatedShip = await _shipSerivce.UpdateShipAsync(shipId, ship);
+            var updatedShip = await _shipSerivce.UpdateShipAsync(shipCode, ship);
             if (updatedShip == null)
             {
                 return NotFound();
