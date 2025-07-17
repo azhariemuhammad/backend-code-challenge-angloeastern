@@ -1,9 +1,6 @@
 using ShipManagement.Models;
-using ShipManagement.Data;
 using ShipManagement.Interfaces;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
 
 namespace ShipManagement.Controllers
 {
@@ -22,7 +19,7 @@ namespace ShipManagement.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
-            var users = await _userService.GetUsersDtoAsync();
+            var users = await _userService.GetUsersAsync();
             return Ok(users);
         }
 
@@ -41,13 +38,24 @@ namespace ShipManagement.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetUser(int id)
         {
-            var user = await _userService.GetUserDtoByIdAsync(id);
+            var user = await _userService.GetUserByIdAsync(id);
             if (user == null)
             {
                 return NotFound();
             }
 
             return Ok(user);
+        }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteUser(int id)
+        {
+            var result = await _userService.DeleteUserAsync(id);
+            if (!result)
+            {
+                return NotFound();
+            }
+
+            return NoContent();
         }
     }
 }

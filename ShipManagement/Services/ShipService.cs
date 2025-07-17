@@ -171,5 +171,15 @@ namespace ShipManagement.Services
                 Longitude = existingShip.Longitude
             };
         }
+
+        public async Task<bool> DeleteShipAsync(int id)
+        {
+            var ship = await _context.Ships.FindAsync(id);
+            if (ship == null) return false;
+
+            _context.Ships.Remove(ship);
+            await _context.SaveChangesAsync();
+            return true;
+        }
     }
 }

@@ -22,7 +22,7 @@ namespace ShipManagement.Services
             return user;
         }
 
-        public async Task<IEnumerable<UserDetailDto>> GetUsersDtoAsync()
+        public async Task<IEnumerable<UserDetailDto>> GetUsersAsync()
         {
             return await _context.Users
                 .Select(u => new UserDetailDto
@@ -47,7 +47,7 @@ namespace ShipManagement.Services
                 .ToListAsync();
         }
 
-        public async Task<UserDetailDto?> GetUserDtoByIdAsync(int id)
+        public async Task<UserDetailDto?> GetUserByIdAsync(int id)
         {
             return await _context.Users
                 .Where(u => u.Id == id)
@@ -96,6 +96,16 @@ namespace ShipManagement.Services
                     }).ToList()
                 })
                 .FirstOrDefaultAsync();
+        }
+
+        public async Task<bool> DeleteUserAsync(int id)
+        {
+            var user = await _context.Users.FindAsync(id);
+            if (user == null) return false;
+
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }

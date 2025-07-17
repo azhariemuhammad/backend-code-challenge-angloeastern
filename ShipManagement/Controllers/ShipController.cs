@@ -12,17 +12,17 @@ namespace ShipManagement.Controllers
     // [Authorize]
     public class ShipController : ControllerBase
     {
-        private readonly IShipService _shipSerivce;
+        private readonly IShipService _shipService;
 
         public ShipController(IShipService userShipService)
         {
-            _shipSerivce = userShipService;
+            _shipService = userShipService;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ShipBasicDto>>> GetShips()
         {
-            var ships = await _shipSerivce.GetShipsAsync();
+            var ships = await _shipService.GetShipsAsync();
             return Ok(ships);
         }
 
@@ -30,7 +30,7 @@ namespace ShipManagement.Controllers
         [RequiredValidShipCode]
         public async Task<ActionResult<ShipBasicDto>> GetShipByCode(string shipCode)
         {
-            var ship = await _shipSerivce.GetShipByCodeAsync(shipCode);
+            var ship = await _shipService.GetShipByCodeAsync(shipCode);
             if (ship == null)
             {
                 return NotFound();
@@ -46,7 +46,7 @@ namespace ShipManagement.Controllers
                 return BadRequest(ModelState);
             }
 
-            var createdShip = await _shipSerivce.CreateShipAsync(ship);
+            var createdShip = await _shipService.CreateShipAsync(ship);
             return Ok(createdShip);
         }
 
@@ -59,7 +59,7 @@ namespace ShipManagement.Controllers
                 return BadRequest(ModelState);
             }
 
-            await _shipSerivce.AssignedUser(userId, shipId);
+            await _shipService.AssignedUser(userId, shipId);
 
             return Ok(new { UserId = userId, ShipId = shipId });
         }
@@ -73,7 +73,7 @@ namespace ShipManagement.Controllers
                 return BadRequest(ModelState);
             }
 
-            var updatedShip = await _shipSerivce.UnassignedUserShipAsync(userId, shipId);
+            var updatedShip = await _shipService.UnassignedUserShipAsync(userId, shipId);
             if (updatedShip == null)
             {
                 return NotFound();
@@ -92,7 +92,7 @@ namespace ShipManagement.Controllers
                 return BadRequest(ModelState);
             }
 
-            var updatedShip = await _shipSerivce.UpdateShipAsync(shipCode, ship);
+            var updatedShip = await _shipService.UpdateShipAsync(shipCode, ship);
             if (updatedShip == null)
             {
                 return NotFound();
@@ -105,9 +105,21 @@ namespace ShipManagement.Controllers
         [Route("unassigned")]
         public async Task<ActionResult<IEnumerable<ShipBasicDto>>> GetUnAssignedShips()
         {
-            var ships = await _shipSerivce.GetUnAssignedShipsAsync();
+            var ships = await _shipService.GetUnAssignedShipsAsync();
 
             return Ok(ships);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteShip(int id)
+        {
+            var result = await _shipService.DeleteShipAsync(id);
+            if (!result)
+            {
+                return NotFound();
+            }
+
+            return NoContent();
         }
     }
 }

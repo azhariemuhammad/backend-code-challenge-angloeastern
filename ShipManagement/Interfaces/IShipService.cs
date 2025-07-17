@@ -14,5 +14,6 @@ namespace ShipManagement.Interfaces
         Task<ShipDetailDto?> GetShipWithUsersAsync(int id);
         Task<IEnumerable<ShipBasicDto>> GetUnAssignedShipsAsync();
         Task<ShipBasicDto> UpdateShipAsync(string shipCode, Ship ship);
+        Task<bool> DeleteShipAsync(int id);
     }
 }

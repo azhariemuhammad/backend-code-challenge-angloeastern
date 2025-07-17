@@ -42,6 +42,7 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddScoped<IShipService, ShipService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IPortService, PortService>();
 
 
 
