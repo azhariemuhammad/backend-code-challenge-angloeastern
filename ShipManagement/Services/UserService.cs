@@ -22,10 +22,10 @@ namespace ShipManagement.Services
             return user;
         }
 
-        public async Task<IEnumerable<UserDto>> GetUsersDtoAsync()
+        public async Task<IEnumerable<UserDetailDto>> GetUsersDtoAsync()
         {
             return await _context.Users
-                .Select(u => new UserDto
+                .Select(u => new UserDetailDto
                 {
                     Id = u.Id,
                     Name = u.Name,
@@ -47,11 +47,11 @@ namespace ShipManagement.Services
                 .ToListAsync();
         }
 
-        public async Task<UserDto?> GetUserDtoByIdAsync(int id)
+        public async Task<UserDetailDto?> GetUserDtoByIdAsync(int id)
         {
             return await _context.Users
                 .Where(u => u.Id == id)
-                .Select(u => new UserDto
+                .Select(u => new UserDetailDto
                 {
                     Id = u.Id,
                     Name = u.Name,
@@ -74,11 +74,11 @@ namespace ShipManagement.Services
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<UserDto?> GetUserWithShipsAsync(int id)
+        public async Task<UserBasicDto?> GetUserWithShipsAsync(int id)
         {
             return await _context.Users
                 .Where(u => u.Id == id)
-                .Select(u => new UserDto
+                .Select(u => new UserDetailDto
                 {
                     Id = u.Id,
                     Name = u.Name,
@@ -96,21 +96,6 @@ namespace ShipManagement.Services
                     }).ToList()
                 })
                 .FirstOrDefaultAsync();
-        }
-
-        public async Task<UserDto> CreateUserDtoAsync(User user)
-        {
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
-
-            return new UserDto
-            {
-                Id = user.Id,
-                Name = user.Name,
-                Role = user.Role,
-                CreatedAt = user.CreatedAt,
-                UpdatedAt = user.UpdatedAt
-            };
         }
     }
 }

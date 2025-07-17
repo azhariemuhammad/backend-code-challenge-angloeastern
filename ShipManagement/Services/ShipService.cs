@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ShipManagement.Data;
 using ShipManagement.Interfaces;
@@ -50,6 +51,20 @@ namespace ShipManagement.Services
             return newUserShip;
         }
 
+        public async Task<UserShip> UnassignedUserShipAsync(int userId, int shipId)
+        {
+            var userShip = await _context.UserShips.FirstOrDefaultAsync(us => us.UserId == userId && us.ShipId == shipId);
+            if (userShip == null)
+            {
+                throw new KeyNotFoundException($"UserShip for User ID {userId} not found.");
+            }
+
+            _context.UserShips.Remove(userShip);
+            await _context.SaveChangesAsync();
+
+            return userShip;
+        }
+
         public async Task<IEnumerable<ShipBasicDto>> GetShipsAsync()
         {
             return await _context.Ships
@@ -65,18 +80,26 @@ namespace ShipManagement.Services
                 .ToListAsync();
         }
 
-        public async Task<ShipBasicDto?> GetShipByIdAsync(int id)
+        public async Task<ShipDetailDtoWithBasicUsers?> GetShipByCodeAsync(string shipCode)
         {
             return await _context.Ships
-                .Where(s => s.Id == id)
-                .Select(s => new ShipBasicDto
+                .Where(s => s.ShipCode == shipCode)
+                .Select(s => new ShipDetailDtoWithBasicUsers
                 {
                     Id = s.Id,
                     ShipCode = s.ShipCode,
                     Name = s.Name,
                     Velocity = s.Velocity,
                     Latitude = s.Latitude,
-                    Longitude = s.Longitude
+                    Longitude = s.Longitude,
+                    AssignedUsers = s.UserShips.Select(us => new UserBasicDto
+                    {
+                        Id = us.User.Id,
+                        Name = us.User.Name,
+                        Role = us.User.Role,
+                        CreatedAt = us.User.CreatedAt,
+                        UpdatedAt = us.User.UpdatedAt
+                    }).ToList()
                 })
                 .FirstOrDefaultAsync();
         }
@@ -93,7 +116,7 @@ namespace ShipManagement.Services
                     Velocity = s.Velocity,
                     Latitude = s.Latitude,
                     Longitude = s.Longitude,
-                    AssignedUsers = s.UserShips.Select(us => new UserDto
+                    AssignedUsers = s.UserShips.Select(us => new UserDetailDto
                     {
                         Id = us.User.Id,
                         Name = us.User.Name,
@@ -149,5 +172,4 @@ namespace ShipManagement.Services
             };
         }
     }
-
 }

@@ -12,6 +12,12 @@ namespace ShipManagement.Models.DTOs
 
     public class ShipDetailDto : ShipBasicDto
     {
-        public List<UserDto> AssignedUsers { get; set; } = new List<UserDto>();
+        public List<UserDetailDto> AssignedUsers { get; set; } = new List<UserDetailDto>();
+    }
+
+    public class ShipDetailDtoWithBasicUsers : ShipBasicDto
+    {
+        public List<UserBasicDto> AssignedUsers { get; set; } = new List<UserBasicDto>();
+
     }
 }

@@ -26,6 +26,18 @@ namespace ShipManagement.Controllers
             return Ok(ships);
         }
 
+        [HttpGet("{shipCode}")]
+        [RequiredValidShipCode]
+        public async Task<ActionResult<ShipBasicDto>> GetShipByCode(string shipCode)
+        {
+            var ship = await _shipSerivce.GetShipByCodeAsync(shipCode);
+            if (ship == null)
+            {
+                return NotFound();
+            }
+            return Ok(ship);
+        }
+
         [HttpPost]
         public async Task<ActionResult<Ship>> CreateShip(Ship ship)
         {
@@ -39,7 +51,7 @@ namespace ShipManagement.Controllers
         }
 
         [HttpPost]
-        [Route("assign")]
+        [Route("assign/{shipId}")]
         public async Task<ActionResult<UserShip>> CreateUserShip(int userId, int shipId)
         {
             if (!ModelState.IsValid)
@@ -52,27 +64,27 @@ namespace ShipManagement.Controllers
             return Ok(new { UserId = userId, ShipId = shipId });
         }
 
-        // [HttpPut]
-        // [Route("unassigned/{shipId}")]
-        // public async Task<ActionResult<ShipBasicDto>> UnassigneUserShip(int shipId, Ship ship)
-        // {
-        //     if (!ModelState.IsValid)
-        //     {
-        //         return BadRequest(ModelState);
-        //     }
+        [HttpPut]
+        [Route("unassigned/{shipId}")]
+        public async Task<ActionResult<ShipBasicDto>> UnassigneUserShip(int userId, int shipId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
-        //     var updatedShip = await _shipSerivce.UnassignedUser(shipId, ship);
-        //     if (updatedShip == null)
-        //     {
-        //         return NotFound();
-        //     }
+            var updatedShip = await _shipSerivce.UnassignedUserShipAsync(userId, shipId);
+            if (updatedShip == null)
+            {
+                return NotFound();
+            }
 
-        //     return Ok(updatedShip);
-        // }
+            return Ok(updatedShip);
+        }
 
         [HttpPut]
         [Route("{shipCode}")]
-        [RequiredValidShipId]
+        [RequiredValidShipCode]
         public async Task<ActionResult<ShipBasicDto>> UpdateShip(string shipCode, Ship ship)
         {
             if (!ModelState.IsValid)
@@ -90,7 +102,7 @@ namespace ShipManagement.Controllers
         }
 
         [HttpGet]
-        [Route("unassigned-list")]
+        [Route("unassigned")]
         public async Task<ActionResult<IEnumerable<ShipBasicDto>>> GetUnAssignedShips()
         {
             var ships = await _shipSerivce.GetUnAssignedShipsAsync();
