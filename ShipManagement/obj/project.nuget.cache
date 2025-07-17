@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "GNKQcjoppMw=",
+  "dgSpecHash": "Do4+xTxnvHM=",
   "success": true,
   "projectFilePath": "/Users/azharie/Documents/sandbox/backend-code-challenge-angloeastern/ShipManagement/ShipManagement.csproj",
   "expectedPackageFiles": [
@@ -27,6 +27,7 @@
     "/Users/azharie/.nuget/packages/microsoft.extensions.apidescription.server/9.0.0/microsoft.extensions.apidescription.server.9.0.0.nupkg.sha512",
     "/Users/azharie/.nuget/packages/microsoft.extensions.caching.abstractions/9.0.7/microsoft.extensions.caching.abstractions.9.0.7.nupkg.sha512",
     "/Users/azharie/.nuget/packages/microsoft.extensions.caching.memory/9.0.7/microsoft.extensions.caching.memory.9.0.7.nupkg.sha512",
+    "/Users/azharie/.nuget/packages/microsoft.extensions.caching.stackexchangeredis/9.0.7/microsoft.extensions.caching.stackexchangeredis.9.0.7.nupkg.sha512",
     "/Users/azharie/.nuget/packages/microsoft.extensions.configuration.abstractions/9.0.7/microsoft.extensions.configuration.abstractions.9.0.7.nupkg.sha512",
     "/Users/azharie/.nuget/packages/microsoft.extensions.dependencyinjection/9.0.7/microsoft.extensions.dependencyinjection.9.0.7.nupkg.sha512",
     "/Users/azharie/.nuget/packages/microsoft.extensions.dependencyinjection.abstractions/9.0.7/microsoft.extensions.dependencyinjection.abstractions.9.0.7.nupkg.sha512",
@@ -47,6 +48,8 @@
     "/Users/azharie/.nuget/packages/mono.texttemplating/3.0.0/mono.texttemplating.3.0.0.nupkg.sha512",
     "/Users/azharie/.nuget/packages/npgsql/9.0.3/npgsql.9.0.3.nupkg.sha512",
     "/Users/azharie/.nuget/packages/npgsql.entityframeworkcore.postgresql/9.0.4/npgsql.entityframeworkcore.postgresql.9.0.4.nupkg.sha512",
+    "/Users/azharie/.nuget/packages/pipelines.sockets.unofficial/2.2.8/pipelines.sockets.unofficial.2.2.8.nupkg.sha512",
+    "/Users/azharie/.nuget/packages/stackexchange.redis/2.8.41/stackexchange.redis.2.8.41.nupkg.sha512",
     "/Users/azharie/.nuget/packages/swashbuckle.aspnetcore/9.0.3/swashbuckle.aspnetcore.9.0.3.nupkg.sha512",
     "/Users/azharie/.nuget/packages/swashbuckle.aspnetcore.swagger/9.0.3/swashbuckle.aspnetcore.swagger.9.0.3.nupkg.sha512",
     "/Users/azharie/.nuget/packages/swashbuckle.aspnetcore.swaggergen/9.0.3/swashbuckle.aspnetcore.swaggergen.9.0.3.nupkg.sha512",

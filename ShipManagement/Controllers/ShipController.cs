@@ -13,10 +13,12 @@ namespace ShipManagement.Controllers
     public class ShipController : ControllerBase
     {
         private readonly IShipService _shipService;
+        private readonly IRedisCacheService _redisCacheService;
 
-        public ShipController(IShipService userShipService)
+        public ShipController(IShipService userShipService, IRedisCacheService redisCacheService)
         {
             _shipService = userShipService;
+            _redisCacheService = redisCacheService;
         }
 
         [HttpGet]
@@ -105,7 +107,16 @@ namespace ShipManagement.Controllers
         [Route("unassigned")]
         public async Task<ActionResult<IEnumerable<ShipBasicDto>>> GetUnAssignedShips()
         {
+            const string cacheKey = "unassigned_ships";
+            var cachedResponse = await _redisCacheService.GetAsync<IEnumerable<ShipBasicDto>>(cacheKey);
+
+            if (cachedResponse is not null)
+            {
+                return Ok(cachedResponse);
+            }
+
             var ships = await _shipService.GetUnAssignedShipsAsync();
+            await _redisCacheService.SetAsync(cacheKey, ships, TimeSpan.FromMinutes(5));
 
             return Ok(ships);
         }

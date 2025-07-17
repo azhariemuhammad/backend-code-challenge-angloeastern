@@ -12,6 +12,10 @@ var builder = WebApplication.CreateBuilder(args);
 // DB
 builder.Services.AddDbContext<ShipManagementContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+// Redis Cache
+builder.Services.AddStackExchangeRedisCache(options =>
+    options.Configuration = builder.Configuration.GetConnectionString("Redis"));
+
 // Controllers
 builder.Services.AddControllers();
 // Swagger
@@ -43,6 +47,7 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddScoped<IShipService, ShipService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IPortService, PortService>();
+builder.Services.AddScoped<IRedisCacheService, RedisService>();
 
 
 

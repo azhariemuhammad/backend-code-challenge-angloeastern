@@ -145,3 +145,6 @@
 /Users/azharie/Documents/sandbox/backend-code-challenge-angloeastern/ShipManagement/bin/Debug/net9.0/Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
 /Users/azharie/Documents/sandbox/backend-code-challenge-angloeastern/ShipManagement/bin/Debug/net9.0/Microsoft.IdentityModel.Tokens.dll
 /Users/azharie/Documents/sandbox/backend-code-challenge-angloeastern/ShipManagement/bin/Debug/net9.0/System.IdentityModel.Tokens.Jwt.dll
+/Users/azharie/Documents/sandbox/backend-code-challenge-angloeastern/ShipManagement/bin/Debug/net9.0/Microsoft.Extensions.Caching.StackExchangeRedis.dll
+/Users/azharie/Documents/sandbox/backend-code-challenge-angloeastern/ShipManagement/bin/Debug/net9.0/Pipelines.Sockets.Unofficial.dll
+/Users/azharie/Documents/sandbox/backend-code-challenge-angloeastern/ShipManagement/bin/Debug/net9.0/StackExchange.Redis.dll
