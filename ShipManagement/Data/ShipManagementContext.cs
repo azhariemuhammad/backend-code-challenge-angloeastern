@@ -18,19 +18,16 @@ namespace ShipManagement.Data
 
             modelBuilder.Entity<UserShip>()
                 .HasKey(us => new { us.UserId, us.ShipId });
-
             modelBuilder.Entity<UserShip>()
                 .HasOne(us => us.User)
                 .WithMany(u => u.UserShips)
                 .HasForeignKey(us => us.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
-
             modelBuilder.Entity<UserShip>()
                 .HasOne(us => us.Ship)
                 .WithMany(s => s.UserShips)
                 .HasForeignKey(us => us.ShipId)
                 .OnDelete(DeleteBehavior.Cascade);
-
             modelBuilder.Entity<Ship>()
                 .Property(s => s.Velocity)
                 .HasPrecision(10, 2);
@@ -40,13 +37,15 @@ namespace ShipManagement.Data
             modelBuilder.Entity<Ship>()
                 .Property(s => s.Longitude)
                 .HasPrecision(10, 8);
-
             modelBuilder.Entity<Port>()
                 .Property(p => p.Latitude)
                 .HasPrecision(10, 8);
             modelBuilder.Entity<Port>()
                 .Property(p => p.Longitude)
                 .HasPrecision(10, 8);
+            modelBuilder.Entity<Ship>()
+            .HasIndex(s => s.ShipCode)
+            .IsUnique();
         }
     }
 }
