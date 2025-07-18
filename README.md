@@ -1,5 +1,51 @@
 # AE Backend Code Challenge
 
+
+## How to Run This Project
+
+You can run this project either using Docker or locally with the .NET CLI.
+
+### Option 1: Run with Docker
+
+1. Make sure you have [Docker](https://www.docker.com/products/docker-desktop) installed.
+2. In the project root, run:
+
+   ```sh
+   docker-compose up -d
+   ```
+
+
+3. Make sure you have [.NET 9 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/9.0) installed.
+4. Restore dependencies:
+
+   ```sh
+   dotnet restore
+   ```
+
+5. Build the project:
+
+   ```sh
+   dotnet build
+   ```
+
+6. Run the API:
+
+   ```sh
+   dotnet run --project ShipManagement/ShipManagement.csproj
+   ```
+7. The API will be available at 'http://localhost:8080/api/'
+
+
+### Running Tests
+
+To run the tests, execute:
+
+```sh
+dotnet test
+```
+
+
+
 The goal of this challenge is to build a solution comprised of REST APIs that finds the closest port to a given ship and calculates the estimated arrival time based on velocity and geolocation (longitude and latitude) of given ship. Requirements are: 
 
 * Each user has a name and role. Each user can be assigned one or more ships. Develop basic REST APIs to manage users.
@@ -24,6 +70,8 @@ Challenge delivery time should not be longer than a week.
 9. As a consumer of the API, I want to be able to see the closest port to a ship with estimated arrival time to the port together with relevant details. ✅ 
 
 Feel free to make asumption on anything that is not stated in the description.
+
+---
 
 ## Deliverable
 
