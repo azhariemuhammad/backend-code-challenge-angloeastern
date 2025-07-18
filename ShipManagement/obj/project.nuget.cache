@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "Do4+xTxnvHM=",
+  "dgSpecHash": "y8pQrXJr4d8=",
   "success": true,
   "projectFilePath": "/Users/azharie/Documents/sandbox/backend-code-challenge-angloeastern/ShipManagement/ShipManagement.csproj",
   "expectedPackageFiles": [
@@ -51,6 +51,7 @@
     "/Users/azharie/.nuget/packages/pipelines.sockets.unofficial/2.2.8/pipelines.sockets.unofficial.2.2.8.nupkg.sha512",
     "/Users/azharie/.nuget/packages/stackexchange.redis/2.8.41/stackexchange.redis.2.8.41.nupkg.sha512",
     "/Users/azharie/.nuget/packages/swashbuckle.aspnetcore/9.0.3/swashbuckle.aspnetcore.9.0.3.nupkg.sha512",
+    "/Users/azharie/.nuget/packages/swashbuckle.aspnetcore.annotations/9.0.3/swashbuckle.aspnetcore.annotations.9.0.3.nupkg.sha512",
     "/Users/azharie/.nuget/packages/swashbuckle.aspnetcore.swagger/9.0.3/swashbuckle.aspnetcore.swagger.9.0.3.nupkg.sha512",
     "/Users/azharie/.nuget/packages/swashbuckle.aspnetcore.swaggergen/9.0.3/swashbuckle.aspnetcore.swaggergen.9.0.3.nupkg.sha512",
     "/Users/azharie/.nuget/packages/swashbuckle.aspnetcore.swaggerui/9.0.3/swashbuckle.aspnetcore.swaggerui.9.0.3.nupkg.sha512",

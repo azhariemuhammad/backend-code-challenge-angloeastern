@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using ShipManagement.Interfaces;
 using ShipManagement.Models.DTOs;
 using ShipManagement.Constants;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace ShipManagement.Controllers
 {
@@ -18,6 +19,10 @@ namespace ShipManagement.Controllers
         }
 
         [HttpGet("closest-port/{shipId}")]
+        [SwaggerOperation(
+            Summary = "Retrieves the closest port for a ship.",
+            Description = "Returns the closest port and distance for the specified ship ID. Returns 404 if the ship is not found."
+        )]
         public async Task<ActionResult<PortWithDistanceDto>> GetClosestPort(int shipId)
         {
             try
@@ -44,6 +49,10 @@ namespace ShipManagement.Controllers
         }
 
         [HttpGet("estimated-arrival/{shipId}")]
+        [SwaggerOperation(
+            Summary = "Retrieves the estimated arrival time for a ship.",
+            Description = "Returns the estimated arrival time at the next port for the specified ship ID. Returns 404 if the ship is not found."
+        )]
         public async Task<ActionResult<EstimatedArrivalDto>> GetEstimatedArrival(int shipId)
         {
             try

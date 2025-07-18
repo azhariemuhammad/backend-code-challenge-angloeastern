@@ -5,6 +5,7 @@ using ShipManagement.Models.Attributes;
 using ShipManagement.Models.DTOs;
 using ShipManagement.Services;
 using ShipManagement.Constants;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace ShipManagement.Controllers
 {
@@ -23,6 +24,10 @@ namespace ShipManagement.Controllers
         }
 
         [HttpGet]
+        [SwaggerOperation(
+            Summary = "Retrieves all ships.",
+            Description = "Returns a list of all ships in the system."
+        )]
         public async Task<ActionResult<IEnumerable<ShipBasicDto>>> GetShips()
         {
             try
@@ -37,6 +42,10 @@ namespace ShipManagement.Controllers
         }
 
         [HttpGet("{shipCode}")]
+        [SwaggerOperation(
+            Summary = "Retrieves a ship by its code.",
+            Description = "Returns ship details for the specified ship code. Returns 404 if not found."
+        )]
         [RequiredValidShipCode]
         public async Task<ActionResult<ShipBasicDto>> GetShipByCode(string shipCode)
         {
@@ -56,6 +65,10 @@ namespace ShipManagement.Controllers
         }
 
         [HttpPost]
+        [SwaggerOperation(
+            Summary = "Creates a new ship.",
+            Description = "Adds a new ship to the system. Returns the created ship. Fails if the ship code already exists."
+        )]
         public async Task<ActionResult<Ship>> CreateShip(Ship ship)
         {
             if (!ModelState.IsValid)
@@ -87,6 +100,10 @@ namespace ShipManagement.Controllers
 
         [HttpPost]
         [Route("assign/{shipId}")]
+        [SwaggerOperation(
+            Summary = "Assigns a user to a ship.",
+            Description = "Assigns the specified user to the specified ship. Returns the assignment details."
+        )]
         public async Task<ActionResult<UserShip>> CreateUserShip(int userId, int shipId)
         {
             if (!ModelState.IsValid)
@@ -115,6 +132,10 @@ namespace ShipManagement.Controllers
 
         [HttpPut]
         [Route("unassigned/{shipId}")]
+        [SwaggerOperation(
+            Summary = "Unassigns a user from a ship.",
+            Description = "Removes the assignment of the specified user from the specified ship. Returns the updated ship."
+        )]
         public async Task<ActionResult<ShipBasicDto>> UnassigneUserShip(int userId, int shipId)
         {
             if (!ModelState.IsValid)
@@ -145,6 +166,10 @@ namespace ShipManagement.Controllers
         [HttpPut]
         [Route("{shipCode}")]
         [RequiredValidShipCode]
+        [SwaggerOperation(
+            Summary = "Updates a ship or updates the velocity of a ship.",
+            Description = "Updates the details of the specified ship. Returns the updated ship. Fails if the ship code is not found or duplicate."
+        )]
         public async Task<ActionResult<ShipBasicDto>> UpdateShip(string shipCode, Ship ship)
         {
             if (!ModelState.IsValid)
@@ -178,6 +203,10 @@ namespace ShipManagement.Controllers
 
         [HttpGet]
         [Route("unassigned")]
+        [SwaggerOperation(
+            Summary = "Retrieves all unassigned ships.",
+            Description = "Returns a list of ships that are not assigned to any user."
+        )]
         public async Task<ActionResult<IEnumerable<ShipBasicDto>>> GetUnAssignedShips()
         {
             try
@@ -202,6 +231,10 @@ namespace ShipManagement.Controllers
         }
 
         [HttpDelete("{id}")]
+        [SwaggerOperation(
+            Summary = "Deletes a ship.",
+            Description = "Deletes the ship with the specified ID. Returns 204 No Content if successful, 404 if not found."
+        )]
         public async Task<IActionResult> DeleteShip(int id)
         {
             try

@@ -148,3 +148,4 @@
 /Users/azharie/Documents/sandbox/backend-code-challenge-angloeastern/ShipManagement/bin/Debug/net9.0/Microsoft.Extensions.Caching.StackExchangeRedis.dll
 /Users/azharie/Documents/sandbox/backend-code-challenge-angloeastern/ShipManagement/bin/Debug/net9.0/Pipelines.Sockets.Unofficial.dll
 /Users/azharie/Documents/sandbox/backend-code-challenge-angloeastern/ShipManagement/bin/Debug/net9.0/StackExchange.Redis.dll
+/Users/azharie/Documents/sandbox/backend-code-challenge-angloeastern/ShipManagement/bin/Debug/net9.0/Swashbuckle.AspNetCore.Annotations.dll

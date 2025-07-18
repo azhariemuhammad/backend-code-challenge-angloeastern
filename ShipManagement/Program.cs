@@ -26,7 +26,10 @@ builder.Services.AddStackExchangeRedisCache(options =>
 builder.Services.AddControllers();
 // Swagger
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.EnableAnnotations();
+});
 
 // builder.Services.AddIdentity<IdentityUser, IdentityRole>()
 //     .AddEntityFrameworkStores<ShipManagementContext>()
