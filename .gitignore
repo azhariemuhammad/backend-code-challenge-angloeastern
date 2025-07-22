@@ -16,8 +16,6 @@ symbolCache.db
 *.sln.docstates
 
 # Environment-specific configuration files, Development, QA, Staging, etc
-appsettings.*.json
-!appsettings.json
 
 # Build results
 [Dd]ebug/

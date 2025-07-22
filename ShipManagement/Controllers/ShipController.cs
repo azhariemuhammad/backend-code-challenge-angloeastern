@@ -211,16 +211,16 @@ namespace ShipManagement.Controllers
         {
             try
             {
-                // const string cacheKey = "unassigned_ships";
-                // var cachedResponse = await _redisCacheService.GetAsync<IEnumerable<ShipBasicDto>>(cacheKey);
+                const string cacheKey = "unassigned_ships";
+                var cachedResponse = await _redisCacheService.GetAsync<IEnumerable<ShipBasicDto>>(cacheKey);
 
-                // if (cachedResponse is not null)
-                // {
-                //     return Ok(cachedResponse);
-                // }
+                if (cachedResponse is not null)
+                {
+                    return Ok(cachedResponse);
+                }
 
                 var ships = await _shipService.GetUnAssignedShipsAsync();
-                // await _redisCacheService.SetAsync(cacheKey, ships, TimeSpan.FromMinutes(5));
+                await _redisCacheService.SetAsync(cacheKey, ships, TimeSpan.FromMinutes(5));
 
                 return Ok(ships);
             }
