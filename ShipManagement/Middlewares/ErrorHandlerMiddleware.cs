@@ -13,24 +13,21 @@ namespace ShipManagement.Middlewares
             }
             catch (Exception ex)
             {
-                await HandleExceptionAsync(context, ex);
+                (HttpStatusCode status, string message) = ex switch
+                {
+                    KeyNotFoundException => (HttpStatusCode.NotFound, "Resource not found."),
+                    UnauthorizedAccessException => (HttpStatusCode.Unauthorized, "Access denied."),
+                    ArgumentException => (HttpStatusCode.BadRequest, "Invalid request parameters."),
+                    InvalidOperationException => (HttpStatusCode.BadRequest, ex.Message),
+                    _ => (HttpStatusCode.InternalServerError, "An unexpected error occurred.")
+                };
+
+                var result = JsonSerializer.Serialize(new { error = message });
+                context.Response.ContentType = "application/json";
+                context.Response.StatusCode = (int)status;
+                await context.Response.WriteAsync(result);
             }
         }
 
-        private static Task HandleExceptionAsync(HttpContext context, Exception exception)
-        {
-            var (status, message) = exception switch
-            {
-                KeyNotFoundException => (HttpStatusCode.NotFound, "Resource not found."),
-                UnauthorizedAccessException => (HttpStatusCode.Unauthorized, "Access denied."),
-                ArgumentException => (HttpStatusCode.BadRequest, "Invalid request parameters."),
-                _ => (HttpStatusCode.InternalServerError, "An unexpected error occurred.")
-            };
-
-            var result = JsonSerializer.Serialize(new { error = message });
-            context.Response.ContentType = "application/json";
-            context.Response.StatusCode = (int)status;
-            return context.Response.WriteAsync(result);
-        }
     }
 }

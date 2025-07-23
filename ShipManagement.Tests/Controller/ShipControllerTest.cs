@@ -4,6 +4,7 @@ using ShipManagement.Controllers;
 using ShipManagement.Models.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using Xunit;
+using ShipManagement.Models.Responses;
 
 namespace ShipManagement.Tests.Controller
 {
@@ -24,10 +25,10 @@ namespace ShipManagement.Tests.Controller
         public async Task GetShips_ShouldReturnOkResult()
         {
             // Arrange
-            _mockService.Setup(s => s.GetShipsAsync()).ReturnsAsync(new List<ShipBasicDto>());
+            _mockService.Setup(s => s.GetShipsAsync()).ReturnsAsync(new List<ShipResponse>());
 
             // Act
-            var result = await controller.GetShips();
+            var result = await controller.GetShipsAsync();
 
             // Assert
             Assert.IsType<OkObjectResult>(result.Result);
@@ -42,7 +43,7 @@ namespace ShipManagement.Tests.Controller
             _mockService.Setup(s => s.GetShipByCodeAsync(shipCode)).ReturnsAsync(shipDto);
 
             // Act
-            var result = await controller.GetShipByCode(shipCode);
+            var result = await controller.GetShipByCodeAsync(shipCode);
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result.Result);
@@ -58,7 +59,7 @@ namespace ShipManagement.Tests.Controller
             _mockService.Setup(s => s.GetShipByCodeAsync(shipCode)).ReturnsAsync((ShipDetailDtoWithBasicUsers?)null);
 
             // Act
-            var result = await controller.GetShipByCode(shipCode);
+            var result = await controller.GetShipByCodeAsync(shipCode);
 
             // Assert
             Assert.IsType<NotFoundObjectResult>(result.Result);
@@ -71,7 +72,7 @@ namespace ShipManagement.Tests.Controller
             _mockService.Setup(s => s.GetShipsAsync()).ThrowsAsync(new Exception("Test exception"));
 
             // Act
-            var result = await controller.GetShips();
+            var result = await controller.GetShipsAsync();
 
             // Assert
             var statusResult = Assert.IsType<ObjectResult>(result.Result);
@@ -86,7 +87,7 @@ namespace ShipManagement.Tests.Controller
             _mockService.Setup(s => s.GetShipByCodeAsync(shipCode)).ThrowsAsync(new Exception("Test exception"));
 
             // Act
-            var result = await controller.GetShipByCode(shipCode);
+            var result = await controller.GetShipByCodeAsync(shipCode);
 
             // Assert
             var statusResult = Assert.IsType<ObjectResult>(result.Result);

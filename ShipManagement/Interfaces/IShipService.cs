@@ -6,10 +6,10 @@ namespace ShipManagement.Interfaces
 {
     public interface IShipService
     {
-        Task<Ship> CreateShipAsync(Ship ship);
-        Task<UserShip> AssignedUser(int userId, int shipId);
-        Task<UserShip> UnassignedUserShipAsync(int userId, int shipId);
-        Task<IEnumerable<ShipBasicDto>> GetShipsAsync();
+        Task<IEnumerable<ShipResponse>> GetShipsAsync();
+        Task<ShipResponse> CreateShipAsync(CreateShipRequest newShip);
+        Task<IEnumerable<AssignUsersToShipResponse>> AssignUsersToShipAsync(List<int> userIds, string shipCode);
+        Task UnassignUsersFromShipAsync(List<int> userId, string shipCode);
         Task<ShipDetailDtoWithBasicUsers?> GetShipByCodeAsync(string shipCode);
         Task<ShipDetailDto?> GetShipWithUsersAsync(int id);
         Task<IEnumerable<ShipBasicDto>> GetUnAssignedShipsAsync();

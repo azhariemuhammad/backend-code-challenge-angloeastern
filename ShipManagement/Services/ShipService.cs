@@ -1,74 +1,15 @@
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using ShipManagement.Data;
-using ShipManagement.Interfaces;
-using ShipManagement.Models;
-using ShipManagement.Models.DTOs;
+
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace ShipManagement.Services
 {
-    public class ShipService : IShipService
+    public class ShipService(ShipManagementContext context) : IShipService
     {
-        private readonly ShipManagementContext _context;
 
-        public ShipService(ShipManagementContext context)
+        public async Task<IEnumerable<ShipResponse>> GetShipsAsync()
         {
-            _context = context;
-        }
-
-        public async Task<Ship> CreateShipAsync(Ship ship)
-        {
-            _context.Ships.Add(ship);
-            await _context.SaveChangesAsync();
-            return ship;
-        }
-
-        public async Task<UserShip> AssignedUser(int userId, int shipId)
-        {
-            var user = await _context.Users.FindAsync(userId);
-            if (user == null)
-            {
-                throw new KeyNotFoundException($"User with ID {userId} not found.");
-            }
-
-            var ship = await _context.Ships.FindAsync(shipId);
-            if (ship == null)
-            {
-                throw new KeyNotFoundException($"Ship with ID {shipId} not found.");
-            }
-            var newUserShip = new UserShip
-            {
-                UserId = userId,
-                ShipId = shipId,
-                CreatedAt = DateTime.UtcNow,
-                User = user,
-                Ship = ship
-            };
-
-            _context.UserShips.Add(newUserShip);
-            await _context.SaveChangesAsync();
-
-            return newUserShip;
-        }
-
-        public async Task<UserShip> UnassignedUserShipAsync(int userId, int shipId)
-        {
-            var userShip = await _context.UserShips.FirstOrDefaultAsync(us => us.UserId == userId && us.ShipId == shipId);
-            if (userShip == null)
-            {
-                throw new KeyNotFoundException($"UserShip for User ID {userId} not found.");
-            }
-
-            _context.UserShips.Remove(userShip);
-            await _context.SaveChangesAsync();
-
-            return userShip;
-        }
-
-        public async Task<IEnumerable<ShipBasicDto>> GetShipsAsync()
-        {
-            return await _context.Ships
-                .Select(s => new ShipBasicDto
+            return await context.Ships
+                .Select(s => new ShipResponse
                 {
                     Id = s.Id,
                     ShipCode = s.ShipCode,
@@ -80,9 +21,88 @@ namespace ShipManagement.Services
                 .ToListAsync();
         }
 
+        public async Task<ShipResponse> CreateShipAsync(CreateShipRequest ship)
+        {
+            var existingShip = await context.Ships.FirstOrDefaultAsync(s => s.ShipCode == ship.ShipCode);
+            if (existingShip != null)
+            {
+                throw new InvalidOperationException("Ship code is already in use.");
+            }
+            var newShip = new Ship
+            {
+                ShipCode = ship.ShipCode,
+                Name = ship.Name,
+                Velocity = ship.Velocity,
+                Latitude = ship.Latitude,
+                Longitude = ship.Longitude
+            };
+            context.Ships.Add(newShip);
+            await context.SaveChangesAsync();
+            return new ShipResponse
+            {
+                Id = newShip.Id,
+                ShipCode = newShip.ShipCode,
+                Name = newShip.Name,
+                Velocity = newShip.Velocity,
+                Latitude = newShip.Latitude,
+                Longitude = newShip.Longitude
+            };
+        }
+
+        public async Task<IEnumerable<AssignUsersToShipResponse>> AssignUsersToShipAsync(List<int> userIds, string shipCode)
+        {
+            var users = await context.Users.Where(u => userIds.Contains(u.Id)).ToListAsync();
+            if (users.Count == 0)
+            {
+                throw new KeyNotFoundException("No users found with the provided IDs.");
+            }
+            var ship = await context.Ships.FirstOrDefaultAsync(s => s.ShipCode == shipCode);
+            if (ship == null)
+            {
+                throw new KeyNotFoundException($"Ship with code {shipCode} not found.");
+            }
+            var assignedShips = new List<AssignUsersToShipResponse>();
+            foreach (var user in users)
+            {
+                var userShip = new UserShip
+                {
+                    UserId = user.Id,
+                    ShipId = ship.Id
+                };
+                context.UserShips.Add(userShip);
+                assignedShips.Add(new AssignUsersToShipResponse
+                {
+                    UserId = user.Id,
+                    ShipCode = ship.ShipCode,
+                    ShipName = ship.Name
+                });
+            }
+            await context.SaveChangesAsync();
+            return assignedShips;
+        }
+
+        public async Task UnassignUsersFromShipAsync(List<int> userIds, string shipCode)
+        {
+            var ship = await context.Ships.FirstOrDefaultAsync(s => s.ShipCode == shipCode);
+            if (ship == null)
+            {
+                throw new KeyNotFoundException($"Ship with code {shipCode} not found.");
+            }
+            var userShips = await context.UserShips
+                .Where(us => userIds.Contains(us.UserId) && us.ShipId == ship.Id)
+                .ToListAsync();
+            if (userShips.Count == 0)
+            {
+                throw new KeyNotFoundException("No user-ship assignments found for the provided user IDs and ship code.");
+            }
+            context.UserShips.RemoveRange(userShips);
+            await context.SaveChangesAsync();
+        }
+
+
         public async Task<ShipDetailDtoWithBasicUsers?> GetShipByCodeAsync(string shipCode)
         {
-            return await _context.Ships
+            return await context.Ships
                 .Where(s => s.ShipCode == shipCode)
                 .Select(s => new ShipDetailDtoWithBasicUsers
                 {
@@ -106,7 +126,7 @@ namespace ShipManagement.Services
 
         public async Task<ShipDetailDto?> GetShipWithUsersAsync(int id)
         {
-            return await _context.Ships
+            return await context.Ships
                 .Where(s => s.Id == id)
                 .Select(s => new ShipDetailDto
                 {
@@ -130,8 +150,8 @@ namespace ShipManagement.Services
 
         public async Task<IEnumerable<ShipBasicDto>> GetUnAssignedShipsAsync()
         {
-            return await _context.Ships
-                .Where(s => !_context.UserShips.Any(us => us.ShipId == s.Id))
+            return await context.Ships
+                .Where(s => !context.UserShips.Any(us => us.ShipId == s.Id))
                 .Select(s => new ShipBasicDto
                 {
                     Id = s.Id,
@@ -146,7 +166,7 @@ namespace ShipManagement.Services
 
         public async Task<ShipBasicDto> UpdateShipAsync(string shipCode, Ship ship)
         {
-            var existingShip = await _context.Ships.Where(s => s.ShipCode == shipCode).FirstOrDefaultAsync();
+            var existingShip = await context.Ships.Where(s => s.ShipCode == shipCode).FirstOrDefaultAsync();
             if (existingShip == null)
             {
                 throw new KeyNotFoundException($"Ship with code {shipCode} not found.");
@@ -158,8 +178,8 @@ namespace ShipManagement.Services
             existingShip.Latitude = ship.Latitude;
             existingShip.Longitude = ship.Longitude;
 
-            _context.Ships.Update(existingShip);
-            await _context.SaveChangesAsync();
+            context.Ships.Update(existingShip);
+            await context.SaveChangesAsync();
 
             return new ShipBasicDto
             {
@@ -174,11 +194,11 @@ namespace ShipManagement.Services
 
         public async Task<bool> DeleteShipAsync(int id)
         {
-            var ship = await _context.Ships.FindAsync(id);
+            var ship = await context.Ships.FindAsync(id);
             if (ship == null) return false;
 
-            _context.Ships.Remove(ship);
-            await _context.SaveChangesAsync();
+            context.Ships.Remove(ship);
+            await context.SaveChangesAsync();
             return true;
         }
     }

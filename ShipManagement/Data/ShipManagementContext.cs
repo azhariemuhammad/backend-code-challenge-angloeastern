@@ -31,16 +31,16 @@ namespace ShipManagement.Data
                 .HasPrecision(10, 2);
             modelBuilder.Entity<Ship>()
                 .Property(s => s.Latitude)
-                .HasPrecision(10, 8);
+                .HasPrecision(11, 8);
             modelBuilder.Entity<Ship>()
                 .Property(s => s.Longitude)
-                .HasPrecision(10, 8);
+                .HasPrecision(11, 8);
             modelBuilder.Entity<Port>()
                 .Property(p => p.Latitude)
-                .HasPrecision(10, 8);
+                .HasPrecision(11, 8);
             modelBuilder.Entity<Port>()
                 .Property(p => p.Longitude)
-                .HasPrecision(10, 8);
+                .HasPrecision(11, 8);
             modelBuilder.Entity<Ship>()
             .HasIndex(s => s.ShipCode)
             .IsUnique();

@@ -1,44 +1,27 @@
-using Microsoft.AspNetCore.Mvc;
-using ShipManagement.Interfaces;
-using ShipManagement.Models;
-using ShipManagement.Models.Attributes;
-using ShipManagement.Models.DTOs;
-using ShipManagement.Services;
+
+
 using ShipManagement.Constants;
-using Swashbuckle.AspNetCore.Annotations;
+using ShipManagement.Models.Attributes;
 
 namespace ShipManagement.Controllers
 {
     [ApiController]
     [Route("api/ships")]
     // [Authorize]
-    public class ShipController : ControllerBase
+    public class ShipController(IShipService userShipService, IRedisCacheService redisCacheService) : ControllerBase
     {
-        private readonly IShipService _shipService;
-        private readonly IRedisCacheService _redisCacheService;
-
-        public ShipController(IShipService userShipService, IRedisCacheService redisCacheService)
-        {
-            _shipService = userShipService;
-            _redisCacheService = redisCacheService;
-        }
 
         [HttpGet]
         [SwaggerOperation(
             Summary = "Retrieves all ships.",
             Description = "Returns a list of all ships in the system."
         )]
-        public async Task<ActionResult<IEnumerable<ShipBasicDto>>> GetShips()
+        [ProducesResponseType(typeof(IEnumerable<ShipResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<IEnumerable<ShipResponse>>> GetShipsAsync()
         {
-            try
-            {
-                var ships = await _shipService.GetShipsAsync();
-                return Ok(ships);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { message = Messages.Ship.RetrieveAllError, error = ex.Message });
-            }
+            var ships = await userShipService.GetShipsAsync();
+            return Ok(ships);
         }
 
         [HttpGet("{shipCode}")]
@@ -46,22 +29,18 @@ namespace ShipManagement.Controllers
             Summary = "Retrieves a ship by its code.",
             Description = "Returns ship details for the specified ship code. Returns 404 if not found."
         )]
-        [RequiredValidShipCode]
-        public async Task<ActionResult<ShipBasicDto>> GetShipByCode(string shipCode)
+        [ProducesResponseType(typeof(ShipBasicDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ShipCodeFilter]
+        public async Task<ActionResult<ShipResponse>> GetShipByCodeAsync([FromRoute] string shipCode)
         {
-            try
+            var ship = await userShipService.GetShipByCodeAsync(shipCode);
+            if (ship == null)
             {
-                var ship = await _shipService.GetShipByCodeAsync(shipCode);
-                if (ship == null)
-                {
-                    return NotFound(new { message = string.Format(Messages.Ship.NotFound, shipCode) });
-                }
-                return Ok(ship);
+                return NotFound();
             }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { message = Messages.Ship.RetrieveError, error = ex.Message });
-            }
+            return Ok(ship);
         }
 
         [HttpPost]
@@ -69,192 +48,101 @@ namespace ShipManagement.Controllers
             Summary = "Creates a new ship.",
             Description = "Adds a new ship to the system. Returns the created ship. Fails if the ship code already exists."
         )]
-        public async Task<ActionResult<Ship>> CreateShip(Ship ship)
+        [ProducesResponseType(typeof(ShipResponse), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<Ship>> CreateShip([FromBody] CreateShipRequest newShip)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            try
-            {
-                // Check if ship code already exists
-                var existingShip = await _shipService.GetShipByCodeAsync(ship.ShipCode);
-                if (existingShip != null)
-                {
-                    return Conflict(new { message = string.Format(Messages.Ship.DuplicateShipCode, ship.ShipCode) });
-                }
-
-                var createdShip = await _shipService.CreateShipAsync(ship);
-                return CreatedAtAction(nameof(GetShipByCode), new { shipCode = createdShip.ShipCode }, createdShip);
-            }
-            catch (InvalidOperationException ex) when (ex.Message.Contains("duplicate key") || ex.Message.Contains("unique constraint"))
-            {
-                return Conflict(new { message = string.Format(Messages.Ship.DuplicateShipCode, ship.ShipCode) });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { message = Messages.Ship.CreateError, error = ex.Message });
-            }
+            var createdShip = await userShipService.CreateShipAsync(newShip);
+            return Ok(createdShip);
         }
 
-        [HttpPost]
-        [Route("assign/{shipId}")]
+        [HttpPost("{shipCode}/assign")]
         [SwaggerOperation(
-            Summary = "Assigns a user to a ship.",
+            Summary = "Assigns users to a ship.",
             Description = "Assigns the specified user to the specified ship. Returns the assignment details."
         )]
-        public async Task<ActionResult<UserShip>> CreateUserShip(int userId, int shipId)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        public async Task<ActionResult<IEnumerable<AssignUsersToShipResponse>>> AssignUsersToShipAsync(
+            [FromBody] List<int> userIds,
+            [FromRoute][ValidShipCode] string shipCode)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            try
-            {
-                await _shipService.AssignedUser(userId, shipId);
-                return Ok(new { UserId = userId, ShipId = shipId });
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
-            catch (InvalidOperationException ex)
-            {
-                return Conflict(new { message = ex.Message });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { message = Messages.UserShip.AssignError, error = ex.Message });
-            }
+            var assignedUsers = await userShipService.AssignUsersToShipAsync(userIds, shipCode);
+            return Ok(assignedUsers);
         }
 
-        [HttpPut]
-        [Route("unassigned/{shipId}")]
+        [HttpPut("{shipCode}/unassign")]
         [SwaggerOperation(
-            Summary = "Unassigns a user from a ship.",
+            Summary = "Unassigns users from a ship.",
             Description = "Removes the assignment of the specified user from the specified ship. Returns the updated ship."
         )]
-        public async Task<ActionResult<ShipBasicDto>> UnassigneUserShip(int userId, int shipId)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult> UnassignUsersFromShipAsync(
+            [FromBody] List<int> userIds,
+            [FromRoute][ValidShipCode] string shipCode)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            try
-            {
-                var updatedShip = await _shipService.UnassignedUserShipAsync(userId, shipId);
-                if (updatedShip == null)
-                {
-                    return NotFound(new { message = string.Format(Messages.UserShip.NotAssigned, userId, shipId) });
-                }
-
-                return Ok(updatedShip);
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { message = Messages.UserShip.UnassignError, error = ex.Message });
-            }
+            await userShipService.UnassignUsersFromShipAsync(userIds, shipCode);
+            return Ok(new { message = "Users unassigned successfully." });
         }
 
-        [HttpPut]
-        [Route("{shipCode}")]
-        [RequiredValidShipCode]
-        [SwaggerOperation(
-            Summary = "Updates a ship or updates the velocity of a ship.",
-            Description = "Updates the details of the specified ship. Returns the updated ship. Fails if the ship code is not found or duplicate."
-        )]
-        public async Task<ActionResult<ShipBasicDto>> UpdateShip(string shipCode, Ship ship)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+        // [HttpPut("{shipCode}")]
+        // [RequiredValidShipCode]
+        // [SwaggerOperation(
+        //     Summary = "Updates a ship or updates the velocity of a ship.",
+        //     Description = "Updates the details of the specified ship. Returns the updated ship. Fails if the ship code is not found or duplicate."
+        // )]
+        // [ProducesResponseType(typeof(ShipBasicDto), StatusCodes.Status200OK)]
+        // [ProducesResponseType(StatusCodes.Status404NotFound)]
+        // [ProducesResponseType(StatusCodes.Status409Conflict)]
+        // public async Task<ActionResult<ShipBasicDto>> UpdateShip(string shipCode, [FromBody] ShipBasicDto shipDto)
+        // {
+        //     var updatedShip = await userShipService.UpdateShipAsync(shipCode, shipDto);
+        //     if (updatedShip == null)
+        //     {
+        //         return NotFound();
+        //     }
+        //     return Ok(updatedShip);
+        // }
 
-            try
-            {
-                var updatedShip = await _shipService.UpdateShipAsync(shipCode, ship);
-                if (updatedShip == null)
-                {
-                    return NotFound(new { message = string.Format(Messages.Ship.NotFound, shipCode) });
-                }
+        // [HttpGet]
+        // [Route("unassigned")]
+        // [SwaggerOperation(
+        //     Summary = "Retrieves all unassigned ships.",
+        //     Description = "Returns a list of ships that are not assigned to any user."
+        // )]
+        // [ProducesResponseType(typeof(IEnumerable<ShipBasicDto>), StatusCodes.Status200OK)]
+        // public async Task<ActionResult<IEnumerable<ShipBasicDto>>> GetUnAssignedShips()
+        // {
+        //     const string cacheKey = "unassigned_ships";
+        //     var cachedResponse = await redisCacheService.GetAsync<IEnumerable<ShipBasicDto>>(cacheKey);
+        //     if (cachedResponse is not null)
+        //     {
+        //         return Ok(cachedResponse);
+        //     }
+        //     var ships = await userShipService.GetUnAssignedShipsAsync();
+        //     await redisCacheService.SetAsync(cacheKey, ships, TimeSpan.FromMinutes(5));
+        //     return Ok(ships);
+        // }
 
-                return Ok(updatedShip);
-            }
-            catch (InvalidOperationException ex) when (ex.Message.Contains("duplicate key") || ex.Message.Contains("unique constraint"))
-            {
-                return Conflict(new { message = string.Format(Messages.Ship.DuplicateShipCode, ship.ShipCode) });
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { message = Messages.Ship.UpdateError, error = ex.Message });
-            }
-        }
-
-        [HttpGet]
-        [Route("unassigned")]
-        [SwaggerOperation(
-            Summary = "Retrieves all unassigned ships.",
-            Description = "Returns a list of ships that are not assigned to any user."
-        )]
-        public async Task<ActionResult<IEnumerable<ShipBasicDto>>> GetUnAssignedShips()
-        {
-            try
-            {
-                const string cacheKey = "unassigned_ships";
-                var cachedResponse = await _redisCacheService.GetAsync<IEnumerable<ShipBasicDto>>(cacheKey);
-
-                if (cachedResponse is not null)
-                {
-                    return Ok(cachedResponse);
-                }
-
-                var ships = await _shipService.GetUnAssignedShipsAsync();
-                await _redisCacheService.SetAsync(cacheKey, ships, TimeSpan.FromMinutes(5));
-
-                return Ok(ships);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { message = Messages.Ship.RetrieveUnassignedError, error = ex.Message });
-            }
-        }
-
-        [HttpDelete("{id}")]
-        [SwaggerOperation(
-            Summary = "Deletes a ship.",
-            Description = "Deletes the ship with the specified ID. Returns 204 No Content if successful, 404 if not found."
-        )]
-        public async Task<IActionResult> DeleteShip(int id)
-        {
-            try
-            {
-                var result = await _shipService.DeleteShipAsync(id);
-                if (!result)
-                {
-                    return NotFound(new { message = string.Format(Messages.Ship.NotFoundById, id) });
-                }
-
-                return NoContent();
-            }
-            catch (InvalidOperationException ex)
-            {
-                return Conflict(new { message = ex.Message });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { message = Messages.Ship.DeleteError, error = ex.Message });
-            }
-        }
+        // [HttpDelete("{shipCode}")]
+        // [SwaggerOperation(
+        //     Summary = "Deletes a ship.",
+        //     Description = "Deletes the ship with the specified code. Returns 204 No Content if successful, 404 if not found."
+        // )]
+        // [ProducesResponseType(StatusCodes.Status204NoContent)]
+        // [ProducesResponseType(StatusCodes.Status404NotFound)]
+        // public async Task<IActionResult> DeleteShip(string shipCode)
+        // {
+        //     var result = await userShipService.DeleteShipAsync(shipCode);
+        //     if (!result)
+        //     {
+        //         return NotFound();
+        //     }
+        //     return NoContent();
+        // }
     }
 }

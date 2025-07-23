@@ -8,3 +8,5 @@ global using ShipManagement.Models.Responses;
 global using ShipManagement.Models.Request;
 global using ShipManagement.Models.DTOs;
 global using ShipManagement.Data;
+global using ShipManagement.Models.Attributes;
+global using ShipManagement.Models.Filters;
