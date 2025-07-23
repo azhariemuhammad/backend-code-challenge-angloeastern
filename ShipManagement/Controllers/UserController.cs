@@ -1,30 +1,20 @@
-using ShipManagement.Models;
-using ShipManagement.Interfaces;
-using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.AspNetCore.Annotations;
-
 namespace ShipManagement.Controllers
 {
     [ApiController]
     [Route("api/users")]
-    // [Authorize]
-    public class UserController : ControllerBase
+    public class UserController(IUserService userService) : ControllerBase
     {
-        private readonly IUserService _userService;
-
-        public UserController(IUserService userService)
-        {
-            _userService = userService;
-        }
-
         [HttpGet]
         [SwaggerOperation(
             Summary = "Retrieves all users.",
             Description = "Returns a list of all users in the system."
         )]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        [ProducesResponseType(typeof(IEnumerable<GetUserResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<IEnumerable<GetUserResponse>>> GetUsersAsync()
         {
-            var users = await _userService.GetUsersAsync();
+            var users = await userService.GetUsersAsync();
             return Ok(users);
         }
 
@@ -33,15 +23,13 @@ namespace ShipManagement.Controllers
             Summary = "Creates a new user.",
             Description = "Adds a new user to the system and returns the created user."
         )]
-        public async Task<ActionResult<User>> CreateUser(User user)
+        [ProducesResponseType(typeof(CreateUserResponse), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<CreateUserResponse>> CreateUserAsync(
+            [FromBody] UserDetailsRequest request)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            await _userService.CreateUserAsync(user);
-            return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
+            var result = await userService.CreateUserAsync(request);
+            return Ok(result);
         }
 
         [HttpGet("{id}")]
@@ -49,9 +37,13 @@ namespace ShipManagement.Controllers
             Summary = "Retrieves a user by ID.",
             Description = "Returns user details for the specified user ID. Returns 404 if not found."
         )]
-        public async Task<ActionResult<User>> GetUser(int id)
+        [ProducesResponseType(typeof(GetUserResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<User>> GetUserByIdAsync(int id)
         {
-            var user = await _userService.GetUserByIdAsync(id);
+            var user = await userService.GetUserByIdAsync(id);
             if (user == null)
             {
                 return NotFound();
@@ -66,7 +58,7 @@ namespace ShipManagement.Controllers
         )]
         public async Task<IActionResult> DeleteUser(int id)
         {
-            var result = await _userService.DeleteUserAsync(id);
+            var result = await userService.DeleteUserAsync(id);
             if (!result)
             {
                 return NotFound();

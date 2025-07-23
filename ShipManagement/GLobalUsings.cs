@@ -1,0 +1,10 @@
+global using Microsoft.AspNetCore.Mvc;
+global using Microsoft.EntityFrameworkCore;
+global using System.ComponentModel.DataAnnotations;
+global using ShipManagement.Models;
+global using ShipManagement.Interfaces;
+global using Swashbuckle.AspNetCore.Annotations;
+global using ShipManagement.Models.Responses;
+global using ShipManagement.Models.Request;
+global using ShipManagement.Models.DTOs;
+global using ShipManagement.Data;

@@ -1,19 +1,18 @@
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 using ShipManagement.Data;
-using System.Text;
-using ShipManagement.Interfaces;
+using ShipManagement.Middlewares;
 using ShipManagement.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configure Kestrel to listen on all interfaces
-builder.WebHost.ConfigureKestrel(options =>
+if (builder.Environment.IsProduction())
 {
-    options.ListenAnyIP(8080);
-});
+    // Configure Kestrel to listen on all interfaces
+    builder.WebHost.ConfigureKestrel(options =>
+    {
+        options.ListenAnyIP(8080);
+    });
+}
 
 // DB
 builder.Services.AddDbContext<ShipManagementContext>(options =>
@@ -31,42 +30,19 @@ builder.Services.AddSwaggerGen(c =>
     c.EnableAnnotations();
 });
 
-// builder.Services.AddIdentity<IdentityUser, IdentityRole>()
-//     .AddEntityFrameworkStores<ShipManagementContext>()
-//     .AddDefaultTokenProviders();
-// builder.Services.AddAuthentication(options =>
-// {
-//     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-//     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-// })
-// .AddJwtBearer(options =>
-// {
-//     options.TokenValidationParameters = new TokenValidationParameters
-//     {
-//         ValidateIssuer = true,
-//         ValidateAudience = true,
-//         ValidateLifetime = true,
-//         ValidateIssuerSigningKey = true,
-//         ValidIssuer = builder.Configuration["Jwt:Issuer"],
-//         ValidAudience = builder.Configuration["Jwt:Audience"],
-//         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
-//     };
-// });
-
 builder.Services.AddScoped<IShipService, ShipService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IPortService, PortService>();
 builder.Services.AddScoped<IRedisCacheService, RedisService>();
 
 
-
 var app = builder.Build();
 
 
 app.UseHttpsRedirection();
+app.UseMiddleware<ErrorHandlerMiddleware>();
 app.UseSwagger();
 app.UseSwaggerUI();
-// app.UseAuthorization();
 app.MapControllers();
 
 using (var scope = app.Services.CreateScope())

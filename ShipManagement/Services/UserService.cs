@@ -1,31 +1,28 @@
-using Microsoft.EntityFrameworkCore;
-using ShipManagement.Data;
-using ShipManagement.Interfaces;
-using ShipManagement.Models;
-using ShipManagement.Models.DTOs;
-
 namespace ShipManagement.Services
 {
-    public class UserService : IUserService
+    public class UserService(ShipManagementContext context) : IUserService
     {
-        private readonly ShipManagementContext _context;
-
-        public UserService(ShipManagementContext context)
+        public async Task<CreateUserResponse> CreateUserAsync(UserDetailsRequest request)
         {
-            _context = context;
+            var user = new User
+            {
+                Name = request.Name,
+                Role = request.Role
+            };
+
+            context.Users.Add(user);
+            await context.SaveChangesAsync();
+
+            return new CreateUserResponse
+            {
+                Id = user.Id
+            };
         }
 
-        public async Task<User> CreateUserAsync(User user)
+        public async Task<IEnumerable<GetUserResponse>> GetUsersAsync()
         {
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
-            return user;
-        }
-
-        public async Task<IEnumerable<UserDetailDto>> GetUsersAsync()
-        {
-            return await _context.Users
-                .Select(u => new UserDetailDto
+            return await context.Users
+                .Select(u => new GetUserResponse
                 {
                     Id = u.Id,
                     Name = u.Name,
@@ -34,7 +31,7 @@ namespace ShipManagement.Services
                     UpdatedAt = u.UpdatedAt,
                     AssignedShips = u.UserShips
                     .Where(us => us.UserId == u.Id)
-                    .Select(us => new ShipBasicDto
+                    .Select(us => new ShipResponse
                     {
                         Id = us.Ship.Id,
                         ShipCode = us.Ship.ShipCode,
@@ -47,11 +44,11 @@ namespace ShipManagement.Services
                 .ToListAsync();
         }
 
-        public async Task<UserDetailDto?> GetUserByIdAsync(int id)
+        public async Task<GetUserResponse?> GetUserByIdAsync(int id)
         {
-            return await _context.Users
+            return await context.Users
                 .Where(u => u.Id == id)
-                .Select(u => new UserDetailDto
+                .Select(u => new GetUserResponse
                 {
                     Id = u.Id,
                     Name = u.Name,
@@ -59,53 +56,29 @@ namespace ShipManagement.Services
                     CreatedAt = u.CreatedAt,
                     UpdatedAt = u.UpdatedAt,
                     AssignedShips = u.UserShips
-                    .Where(us => us.UserId == u.Id)
-                    .Select(us => new ShipBasicDto
-                    {
-                        Id = us.Ship.Id,
-                        ShipCode = us.Ship.ShipCode,
-                        Name = us.Ship.Name,
-                        Velocity = us.Ship.Velocity,
-                        Latitude = us.Ship.Latitude,
-                        Longitude = us.Ship.Longitude
-                    }).ToList()
-
-                })
-                .FirstOrDefaultAsync();
-        }
-
-        public async Task<UserBasicDto?> GetUserWithShipsAsync(int id)
-        {
-            return await _context.Users
-                .Where(u => u.Id == id)
-                .Select(u => new UserDetailDto
-                {
-                    Id = u.Id,
-                    Name = u.Name,
-                    Role = u.Role,
-                    CreatedAt = u.CreatedAt,
-                    UpdatedAt = u.UpdatedAt,
-                    AssignedShips = u.UserShips.Select(us => new ShipBasicDto
-                    {
-                        Id = us.Ship.Id,
-                        ShipCode = us.Ship.ShipCode,
-                        Name = us.Ship.Name,
-                        Velocity = us.Ship.Velocity,
-                        Latitude = us.Ship.Latitude,
-                        Longitude = us.Ship.Longitude
-                    }).ToList()
+                        .Where(us => us.UserId == u.Id)
+                        .Select(us => new ShipResponse
+                        {
+                            Id = us.Ship.Id,
+                            ShipCode = us.Ship.ShipCode,
+                            Name = us.Ship.Name,
+                            Velocity = us.Ship.Velocity,
+                            Latitude = us.Ship.Latitude,
+                            Longitude = us.Ship.Longitude
+                        }).ToList()
                 })
                 .FirstOrDefaultAsync();
         }
 
         public async Task<bool> DeleteUserAsync(int id)
         {
-            var user = await _context.Users.FindAsync(id);
-            if (user == null) return false;
-
-            _context.Users.Remove(user);
-            await _context.SaveChangesAsync();
+            var user = await context.Users.FindAsync(id);
+            if (user == null)
+                return false;
+            context.Users.Remove(user);
+            await context.SaveChangesAsync();
             return true;
+
         }
     }
 }

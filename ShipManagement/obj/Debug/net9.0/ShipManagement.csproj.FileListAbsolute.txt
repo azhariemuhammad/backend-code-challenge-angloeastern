@@ -1,5 +1,4 @@
 /Users/azharie/Documents/sandbox/backend-code-challenge-angloeastern/ShipManagement/bin/Debug/net9.0/appsettings.Development.json
-/Users/azharie/Documents/sandbox/backend-code-challenge-angloeastern/ShipManagement/bin/Debug/net9.0/appsettings.json
 /Users/azharie/Documents/sandbox/backend-code-challenge-angloeastern/ShipManagement/bin/Debug/net9.0/ShipManagement.staticwebassets.endpoints.json
 /Users/azharie/Documents/sandbox/backend-code-challenge-angloeastern/ShipManagement/bin/Debug/net9.0/ShipManagement
 /Users/azharie/Documents/sandbox/backend-code-challenge-angloeastern/ShipManagement/bin/Debug/net9.0/ShipManagement.deps.json
@@ -149,3 +148,11 @@
 /Users/azharie/Documents/sandbox/backend-code-challenge-angloeastern/ShipManagement/bin/Debug/net9.0/Pipelines.Sockets.Unofficial.dll
 /Users/azharie/Documents/sandbox/backend-code-challenge-angloeastern/ShipManagement/bin/Debug/net9.0/StackExchange.Redis.dll
 /Users/azharie/Documents/sandbox/backend-code-challenge-angloeastern/ShipManagement/bin/Debug/net9.0/Swashbuckle.AspNetCore.Annotations.dll
+/Users/azharie/Documents/sandbox/backend-code-challenge-angloeastern/ShipManagement/bin/Debug/net9.0/AutoFixture.dll
+/Users/azharie/Documents/sandbox/backend-code-challenge-angloeastern/ShipManagement/bin/Debug/net9.0/AutoFixture.AutoMoq.dll
+/Users/azharie/Documents/sandbox/backend-code-challenge-angloeastern/ShipManagement/bin/Debug/net9.0/AutoFixture.Xunit2.dll
+/Users/azharie/Documents/sandbox/backend-code-challenge-angloeastern/ShipManagement/bin/Debug/net9.0/Castle.Core.dll
+/Users/azharie/Documents/sandbox/backend-code-challenge-angloeastern/ShipManagement/bin/Debug/net9.0/Fare.dll
+/Users/azharie/Documents/sandbox/backend-code-challenge-angloeastern/ShipManagement/bin/Debug/net9.0/Moq.dll
+/Users/azharie/Documents/sandbox/backend-code-challenge-angloeastern/ShipManagement/bin/Debug/net9.0/xunit.abstractions.dll
+/Users/azharie/Documents/sandbox/backend-code-challenge-angloeastern/ShipManagement/bin/Debug/net9.0/xunit.core.dll

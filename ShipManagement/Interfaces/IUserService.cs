@@ -5,10 +5,9 @@ namespace ShipManagement.Interfaces
 {
     public interface IUserService
     {
-        Task<User> CreateUserAsync(User user);
-        Task<IEnumerable<UserDetailDto>> GetUsersAsync();
-        Task<UserDetailDto?> GetUserByIdAsync(int id);
-        Task<UserBasicDto?> GetUserWithShipsAsync(int id);
+        Task<CreateUserResponse> CreateUserAsync(UserDetailsRequest request);
+        Task<IEnumerable<GetUserResponse>> GetUsersAsync();
+        Task<GetUserResponse?> GetUserByIdAsync(int id);
         Task<bool> DeleteUserAsync(int id);
     }
 }

@@ -1,11 +1,9 @@
 using ShipManagement.Models;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace ShipManagement.Data
 {
-    public class ShipManagementContext : IdentityDbContext<IdentityUser>
+    public class ShipManagementContext : DbContext
     {
         public DbSet<Ship> Ships { get; set; }
         public DbSet<User> Users { get; set; }
