@@ -29,8 +29,14 @@ namespace ShipManagement.Data
                 .Property(p => p.Longitude)
                 .HasPrecision(11, 8);
             modelBuilder.Entity<Ship>()
-            .HasIndex(s => s.ShipCode)
-            .IsUnique();
+                .HasIndex(s => s.ShipCode)
+                .IsUnique();
+            modelBuilder.Entity<Ship>()
+                .HasIndex(s => s.Name)
+                .IsUnique();
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.Name)
+                .IsUnique();
         }
     }
 }

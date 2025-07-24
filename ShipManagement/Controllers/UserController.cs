@@ -32,6 +32,7 @@ namespace ShipManagement.Controllers
         {
             await userService.AssignShipsToUserSync(id, shipCodes);
             return Ok(new { message = "User's ships updated successfully." });
+
         }
 
         [HttpPost("{id}/ships/unassign")]

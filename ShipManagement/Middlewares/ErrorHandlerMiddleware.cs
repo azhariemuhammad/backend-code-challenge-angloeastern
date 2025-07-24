@@ -1,4 +1,4 @@
-using System.Net;
+
 using System.Text.Json;
 
 namespace ShipManagement.Middlewares
@@ -13,6 +13,8 @@ namespace ShipManagement.Middlewares
             }
             catch (Exception ex)
             {
+                var response = context.Response;
+                response.ContentType = "application/json";
                 (HttpStatusCode status, string message) = ex switch
                 {
                     KeyNotFoundException => (HttpStatusCode.NotFound, "Resource not found."),

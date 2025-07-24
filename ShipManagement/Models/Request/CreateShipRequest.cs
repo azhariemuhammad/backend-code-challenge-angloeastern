@@ -5,7 +5,7 @@ namespace ShipManagement.Models.Request
 
         [ValidShipCode]
         public required string ShipCode { get; set; }
-        [MaxLength(20)]
+        [MaxLength(30)]
         public required string Name { get; set; }
 
         [Range(0.01, 50.0, ErrorMessage = "Velocity must be between 0.01 and 50.0 knots.")]
