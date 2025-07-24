@@ -5,14 +5,12 @@ using ShipManagement.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-if (builder.Environment.IsProduction())
+// Configure Kestrel to listen on all interfaces
+builder.WebHost.ConfigureKestrel(options =>
 {
-    // Configure Kestrel to listen on all interfaces
-    builder.WebHost.ConfigureKestrel(options =>
-    {
-        options.ListenAnyIP(8080);
-    });
-}
+    options.ListenAnyIP(8080);
+});
+
 
 // DB
 builder.Services.AddDbContext<ShipManagementContext>(options =>
