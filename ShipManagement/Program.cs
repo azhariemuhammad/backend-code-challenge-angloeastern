@@ -40,7 +40,7 @@ var app = builder.Build();
 app.UseMiddleware<ErrorHandlerMiddleware>();
 app.UseSwagger();
 app.UseSwaggerUI();
-// app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 app.MapControllers();
 
 using (var scope = app.Services.CreateScope())
