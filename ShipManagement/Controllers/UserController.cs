@@ -28,7 +28,7 @@ namespace ShipManagement.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> AssignShipsToUserSync(
             int id,
-            [FromBody][ValidShipCodes] List<string> shipCodes)
+            [FromBody][ValidShipCodes][SwaggerParameter(Description = "A list of valid ship codes to assign to the user. Each code must correspond to an existing ship.")] List<string> shipCodes)
         {
             await userService.AssignShipsToUserSync(id, shipCodes);
             return Ok(new { message = "User's ships updated successfully." });
@@ -44,7 +44,7 @@ namespace ShipManagement.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> UnassignShipsFromUserAsync(
             int id,
-            [FromBody][ValidShipCodes] List<string> shipCodes)
+            [FromBody][ValidShipCodes][SwaggerParameter(Description = "A list of valid ship codes to unassign from the user. Each code must correspond to an existing ship.")] List<string> shipCodes)
         {
             await userService.UnassignShipsFromUserAsync(id, shipCodes);
             return Ok(new { message = "User's ships unassigned successfully." });

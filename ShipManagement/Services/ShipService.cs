@@ -25,7 +25,7 @@ namespace ShipManagement.Services
             var existingShip = await context.Ships.FirstOrDefaultAsync(s => s.ShipCode == ship.ShipCode);
             if (existingShip != null)
             {
-                throw new InvalidOperationException("Ship code is already in use.");
+                throw new InvalidOperationException(string.Format(Constants.Messages.Ship.DUPLICATE_SHIP_CODE, ship.ShipCode));
             }
             var newShip = new Ship
             {
@@ -53,12 +53,12 @@ namespace ShipManagement.Services
             var users = await context.Users.Where(u => userIds.Contains(u.Id)).ToListAsync();
             if (users.Count == 0)
             {
-                throw new KeyNotFoundException("No users found with the provided IDs.");
+                throw new KeyNotFoundException(Constants.Messages.UserShip.NOT_ASSIGNED);
             }
             var ship = await context.Ships.Include(s => s.Users).FirstOrDefaultAsync(s => s.ShipCode == shipCode);
             if (ship == null)
             {
-                throw new KeyNotFoundException($"Ship with code {shipCode} not found.");
+                throw new KeyNotFoundException(string.Format(Constants.Messages.Ship.NOT_FOUND, shipCode));
             }
             foreach (var user in users)
             {
@@ -81,12 +81,12 @@ namespace ShipManagement.Services
             var ship = await context.Ships.Include(s => s.Users).FirstOrDefaultAsync(s => s.ShipCode == shipCode);
             if (ship == null)
             {
-                throw new KeyNotFoundException($"Ship with code {shipCode} not found.");
+                throw new KeyNotFoundException(string.Format(Constants.Messages.Ship.NOT_FOUND, shipCode));
             }
             var usersToRemove = ship.Users.Where(u => userIds.Contains(u.Id)).ToList();
             if (usersToRemove.Count == 0)
             {
-                throw new KeyNotFoundException("No user-ship assignments found for the provided user IDs and ship code.");
+                throw new KeyNotFoundException(Constants.Messages.UserShip.NOT_ASSIGNED);
             }
             foreach (var user in usersToRemove)
             {
@@ -165,7 +165,7 @@ namespace ShipManagement.Services
             var ship = await context.Ships.FirstOrDefaultAsync(s => s.ShipCode == shipCode);
             if (ship == null)
             {
-                throw new KeyNotFoundException($"Ship with code {shipCode} not found.");
+                throw new KeyNotFoundException(string.Format(Constants.Messages.Ship.NOT_FOUND, shipCode));
             }
             ship.Velocity = request.Velocity;
             context.Ships.Update(ship);
@@ -177,13 +177,13 @@ namespace ShipManagement.Services
             var ship = await context.Ships.FirstOrDefaultAsync(s => s.ShipCode == shipCode);
             if (ship == null)
             {
-                throw new KeyNotFoundException($"Ship with code {shipCode} not found.");
+                throw new KeyNotFoundException(string.Format(Constants.Messages.Ship.NOT_FOUND, shipCode));
             }
 
             var ports = await context.Ports.ToListAsync();
             if (ports.Count == 0)
             {
-                throw new KeyNotFoundException("No ports found in the system.");
+                throw new KeyNotFoundException(Constants.Messages.Port.NO_PORTS_AVAILABLE);
             }
 
             var closestPort = ports
@@ -205,9 +205,14 @@ namespace ShipManagement.Services
             {
                 ShipCode = ship.ShipCode,
                 ShipName = ship.Name,
-                PortName = closestPort?.Port?.Name ?? string.Empty,
-                PortCountry = closestPort?.Port?.Country ?? string.Empty,
-                DistanceToPort = closestPort?.DistanceKm ?? 0,
+                ShipLatitude = ship.Latitude,
+                ShipLongitude = ship.Longitude,
+                ShipVelocity = ship.Velocity,
+                PortName = closestPort.Port.Name,
+                PortLatitude = closestPort.Port.Latitude,
+                PortLongitude = closestPort.Port.Longitude,
+                PortCountry = closestPort.Port.Country,
+                DistanceToPort = closestPort.DistanceKm,
                 EstimatedArrivalTime = estimatedArrival,
             };
         }

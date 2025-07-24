@@ -71,7 +71,7 @@ namespace ShipManagement.Services
             var user = await context.Users.Include(u => u.Ships).FirstOrDefaultAsync(u => u.Id == userId);
             if (user == null)
             {
-                throw new KeyNotFoundException($"User with ID {userId} not found.");
+                throw new KeyNotFoundException(string.Format(Constants.Messages.UserShip.NOT_ASSIGNED, userId, "N/A"));
             }
 
             foreach (var shipCode in shipCodes)
@@ -109,7 +109,7 @@ namespace ShipManagement.Services
             var user = await context.Users.Include(u => u.Ships).FirstOrDefaultAsync(u => u.Id == userId);
             if (user == null)
             {
-                throw new KeyNotFoundException($"User with ID {userId} not found.");
+                throw new KeyNotFoundException(string.Format(Constants.Messages.UserShip.NOT_ASSIGNED, userId, "N/A"));
             }
 
             foreach (var shipCode in shipCodes)
@@ -117,7 +117,7 @@ namespace ShipManagement.Services
                 var ship = await context.Ships.FirstOrDefaultAsync(s => s.ShipCode == shipCode);
                 if (ship == null)
                 {
-                    throw new KeyNotFoundException($"Ship with code {shipCode} not found.");
+                    throw new KeyNotFoundException(string.Format(Constants.Messages.Ship.NOT_FOUND, shipCode));
                 }
                 if (user.Ships.Any(s => s.Id == ship.Id))
                 {
