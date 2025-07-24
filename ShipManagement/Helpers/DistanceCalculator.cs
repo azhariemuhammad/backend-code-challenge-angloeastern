@@ -1,23 +1,30 @@
-public static class DistanceCalculator
+namespace ShipManagement.Helpers
 {
-    private const double EarthRadiusKm = 6371.0;
-
-    public static double CalculateDistanceKm(decimal lat1, decimal lon1, decimal lat2, decimal lon2)
+    public static class DistanceCalculator
     {
-        var dLat = ToRadians((double)(lat2 - lat1));
-        var dLon = ToRadians((double)(lon2 - lon1));
+        private const double EarthRadiusKm = 6371.0;
 
-        var a = Math.Sin(dLat / 2) * Math.Sin(dLat / 2) +
-                Math.Cos(ToRadians((double)lat1)) * Math.Cos(ToRadians((double)lat2)) *
-                Math.Sin(dLon / 2) * Math.Sin(dLon / 2);
+        public static double CalculateDistanceKm(decimal latitude1, decimal longitude1, decimal latitude2, decimal longitude2)
+        {
+            double latitudeDifferenceRadians = ToRadians((double)(latitude2 - latitude1));
+            double longitudeDifferenceRadians = ToRadians((double)(longitude2 - longitude1));
 
-        var c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
+            double latitude1Radians = ToRadians((double)latitude1);
+            double latitude2Radians = ToRadians((double)latitude2);
 
-        return EarthRadiusKm * c;
-    }
+            double haversineOfLat = Math.Sin(latitudeDifferenceRadians / 2) * Math.Sin(latitudeDifferenceRadians / 2);
+            double haversineOfLon = Math.Sin(longitudeDifferenceRadians / 2) * Math.Sin(longitudeDifferenceRadians / 2);
 
-    private static double ToRadians(double degrees)
-    {
-        return degrees * (Math.PI / 180);
+            double centralAngle = haversineOfLat + Math.Cos(latitude1Radians) * Math.Cos(latitude2Radians) * haversineOfLon;
+            double centralAngleInRadians = 2 * Math.Atan2(Math.Sqrt(centralAngle), Math.Sqrt(1 - centralAngle));
+
+            double distance = EarthRadiusKm * centralAngleInRadians;
+            return distance;
+        }
+
+        private static double ToRadians(double degrees)
+        {
+            return degrees * (Math.PI / 180);
+        }
     }
 }

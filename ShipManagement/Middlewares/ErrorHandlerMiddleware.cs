@@ -3,7 +3,7 @@ using System.Text.Json;
 
 namespace ShipManagement.Middlewares
 {
-    public class ErrorHandlerMiddleware(RequestDelegate next, ILogger<ErrorHandlerMiddleware> logger)
+    public class ErrorHandlerMiddleware(RequestDelegate next)
     {
         public async Task InvokeAsync(HttpContext context)
         {

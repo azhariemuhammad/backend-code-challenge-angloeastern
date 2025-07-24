@@ -16,6 +16,6 @@ namespace ShipManagement.Models
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
-        public ICollection<UserShip> UserShips { get; set; } = new List<UserShip>();
+        public ICollection<User> Users { get; set; } = new List<User>();
     }
 }

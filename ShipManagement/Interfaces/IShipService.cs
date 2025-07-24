@@ -8,12 +8,11 @@ namespace ShipManagement.Interfaces
     {
         Task<IEnumerable<ShipResponse>> GetShipsAsync();
         Task<ShipResponse> CreateShipAsync(CreateShipRequest newShip);
-        Task<IEnumerable<AssignUsersToShipResponse>> AssignUsersToShipAsync(List<int> userIds, string shipCode);
-        Task UnassignUsersFromShipAsync(List<int> userId, string shipCode);
-        Task<ShipDetailDtoWithBasicUsers?> GetShipByCodeAsync(string shipCode);
+        Task<ShipDetails?> GetShipByCodeAsync(string shipCode);
         Task<ShipDetailDto?> GetShipWithUsersAsync(int id);
         Task<IEnumerable<ShipBasicDto>> GetUnAssignedShipsAsync();
-        Task<ShipBasicDto> UpdateShipAsync(string shipCode, Ship ship);
+        Task UpdateShipVelocityAsync(string shipCode, UpdateShipVelocityRequest request);
+        Task<ShipClosestPortResponse> GetClosestPortAsync(string shipCode);
         Task<bool> DeleteShipAsync(int id);
     }
 }

@@ -8,6 +8,8 @@ namespace ShipManagement.Interfaces
         Task<CreateUserResponse> CreateUserAsync(UserDetailsRequest request);
         Task<IEnumerable<GetUserResponse>> GetUsersAsync();
         Task<GetUserResponse?> GetUserByIdAsync(int id);
+        Task<GetUserResponse> AssignShipsToUserSync(int userId, List<string> shipCodes);
+        Task UnassignShipsFromUserAsync(int userId, List<string> shipCodes);
         Task<bool> DeleteUserAsync(int id);
     }
 }

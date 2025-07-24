@@ -1,5 +1,6 @@
 
 using Microsoft.AspNetCore.Http.HttpResults;
+using ShipManagement.Helpers;
 
 namespace ShipManagement.Services
 {
@@ -56,55 +57,52 @@ namespace ShipManagement.Services
             {
                 throw new KeyNotFoundException("No users found with the provided IDs.");
             }
-            var ship = await context.Ships.FirstOrDefaultAsync(s => s.ShipCode == shipCode);
+            var ship = await context.Ships.Include(s => s.Users).FirstOrDefaultAsync(s => s.ShipCode == shipCode);
             if (ship == null)
             {
                 throw new KeyNotFoundException($"Ship with code {shipCode} not found.");
             }
-            var assignedShips = new List<AssignUsersToShipResponse>();
             foreach (var user in users)
             {
-                var userShip = new UserShip
+                if (!ship.Users.Any(u => u.Id == user.Id))
                 {
-                    UserId = user.Id,
-                    ShipId = ship.Id
-                };
-                context.UserShips.Add(userShip);
-                assignedShips.Add(new AssignUsersToShipResponse
-                {
-                    UserId = user.Id,
-                    ShipCode = ship.ShipCode,
-                    ShipName = ship.Name
-                });
+                    ship.Users.Add(user);
+                }
             }
             await context.SaveChangesAsync();
-            return assignedShips;
+            return users.Select(user => new AssignUsersToShipResponse
+            {
+                UserId = user.Id,
+                ShipCode = ship.ShipCode,
+                ShipName = ship.Name
+            }).ToList();
         }
 
         public async Task UnassignUsersFromShipAsync(List<int> userIds, string shipCode)
         {
-            var ship = await context.Ships.FirstOrDefaultAsync(s => s.ShipCode == shipCode);
+            var ship = await context.Ships.Include(s => s.Users).FirstOrDefaultAsync(s => s.ShipCode == shipCode);
             if (ship == null)
             {
                 throw new KeyNotFoundException($"Ship with code {shipCode} not found.");
             }
-            var userShips = await context.UserShips
-                .Where(us => userIds.Contains(us.UserId) && us.ShipId == ship.Id)
-                .ToListAsync();
-            if (userShips.Count == 0)
+            var usersToRemove = ship.Users.Where(u => userIds.Contains(u.Id)).ToList();
+            if (usersToRemove.Count == 0)
             {
                 throw new KeyNotFoundException("No user-ship assignments found for the provided user IDs and ship code.");
             }
-            context.UserShips.RemoveRange(userShips);
+            foreach (var user in usersToRemove)
+            {
+                ship.Users.Remove(user);
+            }
             await context.SaveChangesAsync();
         }
 
 
-        public async Task<ShipDetailDtoWithBasicUsers?> GetShipByCodeAsync(string shipCode)
+        public async Task<ShipDetails?> GetShipByCodeAsync(string shipCode)
         {
             return await context.Ships
                 .Where(s => s.ShipCode == shipCode)
-                .Select(s => new ShipDetailDtoWithBasicUsers
+                .Select(s => new ShipDetails
                 {
                     Id = s.Id,
                     ShipCode = s.ShipCode,
@@ -112,13 +110,13 @@ namespace ShipManagement.Services
                     Velocity = s.Velocity,
                     Latitude = s.Latitude,
                     Longitude = s.Longitude,
-                    AssignedUsers = s.UserShips.Select(us => new UserBasicDto
+                    AssignedUsers = s.Users.Select(u => new UserBasicDto
                     {
-                        Id = us.User.Id,
-                        Name = us.User.Name,
-                        Role = us.User.Role,
-                        CreatedAt = us.User.CreatedAt,
-                        UpdatedAt = us.User.UpdatedAt
+                        Id = u.Id,
+                        Name = u.Name,
+                        Role = u.Role,
+                        CreatedAt = u.CreatedAt,
+                        UpdatedAt = u.UpdatedAt
                     }).ToList()
                 })
                 .FirstOrDefaultAsync();
@@ -136,13 +134,13 @@ namespace ShipManagement.Services
                     Velocity = s.Velocity,
                     Latitude = s.Latitude,
                     Longitude = s.Longitude,
-                    AssignedUsers = s.UserShips.Select(us => new UserDetailDto
+                    AssignedUsers = s.Users.Select(u => new UserDetailDto
                     {
-                        Id = us.User.Id,
-                        Name = us.User.Name,
-                        Role = us.User.Role,
-                        CreatedAt = us.User.CreatedAt,
-                        UpdatedAt = us.User.UpdatedAt
+                        Id = u.Id,
+                        Name = u.Name,
+                        Role = u.Role,
+                        CreatedAt = u.CreatedAt,
+                        UpdatedAt = u.UpdatedAt
                     }).ToList()
                 })
                 .FirstOrDefaultAsync();
@@ -151,7 +149,7 @@ namespace ShipManagement.Services
         public async Task<IEnumerable<ShipBasicDto>> GetUnAssignedShipsAsync()
         {
             return await context.Ships
-                .Where(s => !context.UserShips.Any(us => us.ShipId == s.Id))
+                .Where(s => !s.Users.Any())
                 .Select(s => new ShipBasicDto
                 {
                     Id = s.Id,
@@ -164,31 +162,55 @@ namespace ShipManagement.Services
                 .ToListAsync();
         }
 
-        public async Task<ShipBasicDto> UpdateShipAsync(string shipCode, Ship ship)
+        public async Task UpdateShipVelocityAsync(string shipCode, UpdateShipVelocityRequest request)
         {
-            var existingShip = await context.Ships.Where(s => s.ShipCode == shipCode).FirstOrDefaultAsync();
-            if (existingShip == null)
+            var ship = await context.Ships.FirstOrDefaultAsync(s => s.ShipCode == shipCode);
+            if (ship == null)
+            {
+                throw new KeyNotFoundException($"Ship with code {shipCode} not found.");
+            }
+            ship.Velocity = request.Velocity;
+            context.Ships.Update(ship);
+            await context.SaveChangesAsync();
+        }
+
+        public async Task<ShipClosestPortResponse> GetClosestPortAsync(string shipCode)
+        {
+            var ship = await context.Ships.FirstOrDefaultAsync(s => s.ShipCode == shipCode);
+            if (ship == null)
             {
                 throw new KeyNotFoundException($"Ship with code {shipCode} not found.");
             }
 
-            existingShip.ShipCode = ship.ShipCode;
-            existingShip.Name = ship.Name;
-            existingShip.Velocity = ship.Velocity;
-            existingShip.Latitude = ship.Latitude;
-            existingShip.Longitude = ship.Longitude;
-
-            context.Ships.Update(existingShip);
-            await context.SaveChangesAsync();
-
-            return new ShipBasicDto
+            var ports = await context.Ports.ToListAsync();
+            if (ports.Count == 0)
             {
-                Id = existingShip.Id,
-                ShipCode = existingShip.ShipCode,
-                Name = existingShip.Name,
-                Velocity = existingShip.Velocity,
-                Latitude = existingShip.Latitude,
-                Longitude = existingShip.Longitude
+                throw new KeyNotFoundException("No ports found in the system.");
+            }
+
+            var closestPort = ports
+                .Select(port => new PortWithDistanceDto
+                {
+                    Port = port,
+                    DistanceKm = DistanceCalculator.CalculateDistanceKm(
+                        ship.Latitude, ship.Longitude,
+                        port.Latitude, port.Longitude)
+                })
+                .OrderBy(p => p.DistanceKm)
+                .First();
+
+            var velocityKmh = (double)ship.Velocity * 1.852; // 1 knot = 1.852 km/h
+            var estimatedHours = closestPort.DistanceKm / velocityKmh;
+            var estimatedArrival = DateTime.UtcNow.AddHours(estimatedHours);
+
+            return new ShipClosestPortResponse
+            {
+                ShipCode = ship.ShipCode,
+                ShipName = ship.Name,
+                PortName = closestPort?.Port?.Name ?? string.Empty,
+                PortCountry = closestPort?.Port?.Country ?? string.Empty,
+                DistanceToPort = closestPort?.DistanceKm ?? 0,
+                EstimatedArrivalTime = estimatedArrival,
             };
         }
 
@@ -201,5 +223,6 @@ namespace ShipManagement.Services
             await context.SaveChangesAsync();
             return true;
         }
+
     }
 }

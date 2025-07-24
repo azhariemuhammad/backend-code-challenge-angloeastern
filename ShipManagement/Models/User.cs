@@ -13,6 +13,6 @@ namespace ShipManagement.Models
         public string Role { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
-        public ICollection<UserShip> UserShips { get; set; } = new List<UserShip>();
+        public ICollection<Ship> Ships { get; set; } = new List<Ship>();
     }
 }

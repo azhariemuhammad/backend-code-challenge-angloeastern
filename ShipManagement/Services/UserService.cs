@@ -29,16 +29,14 @@ namespace ShipManagement.Services
                     Role = u.Role,
                     CreatedAt = u.CreatedAt,
                     UpdatedAt = u.UpdatedAt,
-                    AssignedShips = u.UserShips
-                    .Where(us => us.UserId == u.Id)
-                    .Select(us => new ShipResponse
+                    AssignedShips = u.Ships.Select(s => new ShipResponse
                     {
-                        Id = us.Ship.Id,
-                        ShipCode = us.Ship.ShipCode,
-                        Name = us.Ship.Name,
-                        Velocity = us.Ship.Velocity,
-                        Latitude = us.Ship.Latitude,
-                        Longitude = us.Ship.Longitude
+                        Id = s.Id,
+                        ShipCode = s.ShipCode,
+                        Name = s.Name,
+                        Velocity = s.Velocity,
+                        Latitude = s.Latitude,
+                        Longitude = s.Longitude
                     }).ToList()
                 })
                 .ToListAsync();
@@ -55,19 +53,79 @@ namespace ShipManagement.Services
                     Role = u.Role,
                     CreatedAt = u.CreatedAt,
                     UpdatedAt = u.UpdatedAt,
-                    AssignedShips = u.UserShips
-                        .Where(us => us.UserId == u.Id)
-                        .Select(us => new ShipResponse
-                        {
-                            Id = us.Ship.Id,
-                            ShipCode = us.Ship.ShipCode,
-                            Name = us.Ship.Name,
-                            Velocity = us.Ship.Velocity,
-                            Latitude = us.Ship.Latitude,
-                            Longitude = us.Ship.Longitude
-                        }).ToList()
+                    AssignedShips = u.Ships.Select(s => new ShipResponse
+                    {
+                        Id = s.Id,
+                        ShipCode = s.ShipCode,
+                        Name = s.Name,
+                        Velocity = s.Velocity,
+                        Latitude = s.Latitude,
+                        Longitude = s.Longitude
+                    }).ToList()
                 })
                 .FirstOrDefaultAsync();
+        }
+
+        public async Task<GetUserResponse> AssignShipsToUserSync(int userId, List<string> shipCodes)
+        {
+            var user = await context.Users.Include(u => u.Ships).FirstOrDefaultAsync(u => u.Id == userId);
+            if (user == null)
+            {
+                throw new KeyNotFoundException($"User with ID {userId} not found.");
+            }
+
+            foreach (var shipCode in shipCodes)
+            {
+                var ship = await context.Ships.FirstOrDefaultAsync(s => s.ShipCode == shipCode);
+                if (ship != null && !user.Ships.Any(s => s.Id == ship.Id))
+                {
+                    user.Ships.Add(ship);
+                }
+            }
+
+            await context.SaveChangesAsync();
+
+            return new GetUserResponse
+            {
+                Id = user.Id,
+                Name = user.Name,
+                Role = user.Role,
+                CreatedAt = user.CreatedAt,
+                UpdatedAt = user.UpdatedAt,
+                AssignedShips = user.Ships.Select(s => new ShipResponse
+                {
+                    Id = s.Id,
+                    ShipCode = s.ShipCode,
+                    Name = s.Name,
+                    Velocity = s.Velocity,
+                    Latitude = s.Latitude,
+                    Longitude = s.Longitude
+                }).ToList()
+            };
+        }
+
+        public async Task UnassignShipsFromUserAsync(int userId, List<string> shipCodes)
+        {
+            var user = await context.Users.Include(u => u.Ships).FirstOrDefaultAsync(u => u.Id == userId);
+            if (user == null)
+            {
+                throw new KeyNotFoundException($"User with ID {userId} not found.");
+            }
+
+            foreach (var shipCode in shipCodes)
+            {
+                var ship = await context.Ships.FirstOrDefaultAsync(s => s.ShipCode == shipCode);
+                if (ship == null)
+                {
+                    throw new KeyNotFoundException($"Ship with code {shipCode} not found.");
+                }
+                if (user.Ships.Any(s => s.Id == ship.Id))
+                {
+                    user.Ships.Remove(ship);
+                }
+            }
+
+            await context.SaveChangesAsync();
         }
 
         public async Task<bool> DeleteUserAsync(int id)

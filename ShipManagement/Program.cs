@@ -32,7 +32,6 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.AddScoped<IShipService, ShipService>();
 builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IPortService, PortService>();
 builder.Services.AddScoped<IRedisCacheService, RedisService>();
 
 

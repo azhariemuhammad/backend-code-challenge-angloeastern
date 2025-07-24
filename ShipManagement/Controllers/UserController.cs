@@ -6,7 +6,7 @@ namespace ShipManagement.Controllers
     {
         [HttpGet]
         [SwaggerOperation(
-            Summary = "Retrieves all users.",
+            Summary = "Retrieves all users with their assigned ships.",
             Description = "Returns a list of all users in the system."
         )]
         [ProducesResponseType(typeof(IEnumerable<GetUserResponse>), StatusCodes.Status200OK)]
@@ -16,6 +16,37 @@ namespace ShipManagement.Controllers
         {
             var users = await userService.GetUsersAsync();
             return Ok(users);
+        }
+
+        [HttpPost("{id}/ships/assign")]
+        [SwaggerOperation(
+            Summary = "Updates ships assigned to a user.",
+            Description = "Updates the list of ships assigned to the specified user. Replaces the user's ship assignments with the provided list."
+        )]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> AssignShipsToUserSync(
+            int id,
+            [FromBody][ValidShipCodes] List<string> shipCodes)
+        {
+            await userService.AssignShipsToUserSync(id, shipCodes);
+            return Ok(new { message = "User's ships updated successfully." });
+        }
+
+        [HttpPost("{id}/ships/unassign")]
+        [SwaggerOperation(
+            Summary = "Unassigns ships from a user.",
+            Description = "Removes ship assignments for the specified user."
+        )]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> UnassignShipsFromUserAsync(
+            int id,
+            [FromBody][ValidShipCodes] List<string> shipCodes)
+        {
+            await userService.UnassignShipsFromUserAsync(id, shipCodes);
+            return Ok(new { message = "User's ships unassigned successfully." });
         }
 
         [HttpPost]
@@ -66,5 +97,7 @@ namespace ShipManagement.Controllers
 
             return NoContent();
         }
+
+
     }
 }
