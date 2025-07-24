@@ -36,10 +36,11 @@ builder.Services.AddScoped<IRedisCacheService, RedisService>();
 var app = builder.Build();
 
 
+
 app.UseMiddleware<ErrorHandlerMiddleware>();
-app.UseHttpsRedirection();
 app.UseSwagger();
 app.UseSwaggerUI();
+app.UseHttpsRedirection();
 app.MapControllers();
 
 using (var scope = app.Services.CreateScope())
