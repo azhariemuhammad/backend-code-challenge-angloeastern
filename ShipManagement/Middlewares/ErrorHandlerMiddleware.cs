@@ -21,6 +21,8 @@ namespace ShipManagement.Middlewares
                     UnauthorizedAccessException => (HttpStatusCode.Unauthorized, "Access denied."),
                     ArgumentException => (HttpStatusCode.BadRequest, "Invalid request parameters."),
                     InvalidOperationException => (HttpStatusCode.BadRequest, ex.Message),
+                    DuplicateShipCodeException => (HttpStatusCode.Conflict, "Ship code already exists."),
+                    DuplicateUserNameException => (HttpStatusCode.Conflict, "User name already exists."),
                     _ => (HttpStatusCode.InternalServerError, "An unexpected error occurred.")
                 };
 

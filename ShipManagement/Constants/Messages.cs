@@ -33,6 +33,18 @@ namespace ShipManagement.Constants
             public const string NO_PORTS_AVAILABLE = "No ports available for calculation.";
         }
 
+        public static class User
+        {
+            public const string NOT_FOUND = "User with ID {0} not found.";
+            public const string NOT_FOUND_BY_NAME = "User with name '{0}' not found.";
+            public const string CREATE_ERROR = "An error occurred while creating the user.";
+            public const string UPDATE_ERROR = "An error occurred while updating the user.";
+            public const string DELETE_ERROR = "An error occurred while deleting the user.";
+            public const string RETRIEVE_ERROR = "An error occurred while retrieving the user.";
+
+            public const string DUPLICATE_NAME = "A user with the name '{0}' already exists.";
+        }
+
         // General Messages
         public static class General
         {

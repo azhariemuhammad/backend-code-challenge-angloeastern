@@ -25,7 +25,7 @@ namespace ShipManagement.Services
             var existingShip = await context.Ships.FirstOrDefaultAsync(s => s.ShipCode == ship.ShipCode);
             if (existingShip != null)
             {
-                throw new InvalidOperationException(string.Format(Constants.Messages.Ship.DUPLICATE_SHIP_CODE, ship.ShipCode));
+                throw new DuplicateShipCodeException(string.Format(Constants.Messages.Ship.DUPLICATE_SHIP_CODE, ship.ShipCode));
             }
             var newShip = new Ship
             {

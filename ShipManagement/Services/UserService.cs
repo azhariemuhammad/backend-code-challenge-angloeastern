@@ -4,6 +4,11 @@ namespace ShipManagement.Services
     {
         public async Task<CreateUserResponse> CreateUserAsync(UserDetailsRequest request)
         {
+            if (await context.Users.AnyAsync(u => u.Name == request.Name))
+            {
+                throw new DuplicateUserNameException(string.Format(Constants.Messages.User.DUPLICATE_NAME, request.Name));
+            }
+
             var user = new User
             {
                 Name = request.Name,
