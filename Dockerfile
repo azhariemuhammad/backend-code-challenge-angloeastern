@@ -13,8 +13,12 @@ RUN dotnet build "ShipManagement.csproj" -c Release -o /app/build
 
 FROM build AS publish
 RUN dotnet publish "ShipManagement.csproj" -c Release -o /app/publish /p:UseAppHost=false
+# Copy appsettings.Development.json to publish directory
+COPY ShipManagement/appsettings.Development.json /app/publish/appsettings.Development.json
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+# Set environment variable for Development
+ENV ASPNETCORE_ENVIRONMENT=Development
 ENTRYPOINT ["dotnet", "ShipManagement.dll"]
