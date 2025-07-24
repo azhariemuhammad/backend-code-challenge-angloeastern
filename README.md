@@ -94,4 +94,4 @@ Following aspects will be taken into the consideration for the evaluation:
 * Docker
 * Some basic CI scripting
 
-Should you have any questions, feel free to send us an e-mail.
+Should you have any questions, feel free to send us an e-mail..
