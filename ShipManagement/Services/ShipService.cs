@@ -183,11 +183,16 @@ namespace ShipManagement.Services
                 {
                     Port = port,
                     DistanceKm = DistanceCalculator.CalculateDistanceKm(
-                        ship.Latitude, ship.Longitude,
-                        port.Latitude, port.Longitude)
+                        (double)ship.Latitude, (double)ship.Longitude,
+                        (double)port.Latitude, (double)port.Longitude)
                 })
                 .OrderBy(p => p.DistanceKm)
                 .First();
+
+            if (closestPort == null)
+            {
+                throw new KeyNotFoundException(Constants.Messages.Port.NO_PORTS_AVAILABLE);
+            }
 
             var velocityKmh = (double)ship.Velocity * 1.852; // 1 knot = 1.852 km/h
             var estimatedHours = closestPort.DistanceKm / velocityKmh;

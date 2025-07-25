@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using ShipManagement.Data;
@@ -11,9 +12,11 @@ using ShipManagement.Data;
 namespace ShipManagement.Migrations
 {
     [DbContext(typeof(ShipManagementContext))]
-    partial class ShipManagementContextModelSnapshot : ModelSnapshot
+    [Migration("20250725093906_SeedInitialData")]
+    partial class SeedInitialData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -58,55 +61,28 @@ namespace ShipManagement.Migrations
                         {
                             Id = 1,
                             Country = "Netherlands",
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedAt = new DateTime(2025, 7, 25, 9, 39, 6, 171, DateTimeKind.Utc).AddTicks(890),
                             Latitude = 51.92250000m,
                             Longitude = 4.47917000m,
                             Name = "Port of Rotterdam"
                         },
                         new
                         {
-                            Id = 3,
-                            Country = "United States",
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Latitude = 33.73650000m,
-                            Longitude = -18.29230000m,
-                            Name = "Port of Los Angeles"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Country = "Indonesia",
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Latitude = -6.12500000m,
-                            Longitude = 106.88250000m,
-                            Name = "Port of Tanjung Priok"
-                        },
-                        new
-                        {
-                            Id = 5,
+                            Id = 2,
                             Country = "Singapore",
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Latitude = 1.26416700m,
-                            Longitude = 103.82250000m,
+                            CreatedAt = new DateTime(2025, 7, 25, 9, 39, 6, 171, DateTimeKind.Utc).AddTicks(1020),
+                            Latitude = 1.29660000m,
+                            Longitude = 3.80610000m,
                             Name = "Port of Singapore"
                         },
                         new
                         {
-                            Id = 6,
-                            Country = "China",
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Latitude = 31.23000000m,
-                            Longitude = 121.47370000m,
-                            Name = "Port of Shanghai"
-                        },
-                        new
-                        {
-                            Id = 7,
-                            Country = "Hong Kong",
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Latitude = 22.39642800m,
-                            Longitude = 114.10950000m,
-                            Name = "Port of Hong Kong"
+                            Id = 3,
+                            Country = "United States",
+                            CreatedAt = new DateTime(2025, 7, 25, 9, 39, 6, 171, DateTimeKind.Utc).AddTicks(1030),
+                            Latitude = 33.73650000m,
+                            Longitude = -18.29230000m,
+                            Name = "Port of Los Angeles"
                         });
                 });
 
@@ -158,34 +134,34 @@ namespace ShipManagement.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedAt = new DateTime(2025, 7, 25, 9, 39, 6, 171, DateTimeKind.Utc).AddTicks(6060),
                             Latitude = 1.3521m,
                             Longitude = 103.8198m,
                             Name = "Aurora",
                             ShipCode = "AE-001",
-                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            UpdatedAt = new DateTime(2025, 7, 25, 9, 39, 6, 171, DateTimeKind.Utc).AddTicks(6170),
                             Velocity = 22.5m
                         },
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedAt = new DateTime(2025, 7, 25, 9, 39, 6, 171, DateTimeKind.Utc).AddTicks(6290),
                             Latitude = 35.6895m,
                             Longitude = 139.6917m,
                             Name = "Endeavour",
                             ShipCode = "AE-002",
-                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            UpdatedAt = new DateTime(2025, 7, 25, 9, 39, 6, 171, DateTimeKind.Utc).AddTicks(6290),
                             Velocity = 18.7m
                         },
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedAt = new DateTime(2025, 7, 25, 9, 39, 6, 171, DateTimeKind.Utc).AddTicks(6290),
                             Latitude = 51.5074m,
                             Longitude = -0.1278m,
                             Name = "Odyssey",
                             ShipCode = "AE-003",
-                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            UpdatedAt = new DateTime(2025, 7, 25, 9, 39, 6, 171, DateTimeKind.Utc).AddTicks(6290),
                             Velocity = 25.0m
                         });
                 });
@@ -223,26 +199,26 @@ namespace ShipManagement.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedAt = new DateTime(2025, 7, 25, 9, 39, 6, 171, DateTimeKind.Utc).AddTicks(4680),
                             Name = "Alice",
                             Role = "Admin",
-                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                            UpdatedAt = new DateTime(2025, 7, 25, 9, 39, 6, 171, DateTimeKind.Utc).AddTicks(4800)
                         },
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedAt = new DateTime(2025, 7, 25, 9, 39, 6, 171, DateTimeKind.Utc).AddTicks(4920),
                             Name = "Bob",
                             Role = "Operator",
-                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                            UpdatedAt = new DateTime(2025, 7, 25, 9, 39, 6, 171, DateTimeKind.Utc).AddTicks(4920)
                         },
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedAt = new DateTime(2025, 7, 25, 9, 39, 6, 171, DateTimeKind.Utc).AddTicks(4930),
                             Name = "Charlie",
                             Role = "Manager",
-                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                            UpdatedAt = new DateTime(2025, 7, 25, 9, 39, 6, 171, DateTimeKind.Utc).AddTicks(4930)
                         });
                 });
 

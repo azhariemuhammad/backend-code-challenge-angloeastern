@@ -36,6 +36,7 @@ You can run this project either using Docker or locally with the .NET CLI.
    dotnet run --project ShipManagement/ShipManagement.csproj
    ```
 7. The API will be available at 'http://localhost:5012/api/users'
+8. Swagger UI will be available at 'http://localhost:5012/swagger/index.html'
 
 
 

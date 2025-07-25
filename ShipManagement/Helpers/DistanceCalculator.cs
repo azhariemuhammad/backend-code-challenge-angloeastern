@@ -4,22 +4,22 @@ namespace ShipManagement.Helpers
     {
         private const double EarthRadiusKm = 6371.0;
 
-        public static double CalculateDistanceKm(decimal latitude1, decimal longitude1, decimal latitude2, decimal longitude2)
+        public static double CalculateDistanceKm(double latitude1, double longitude1, double latitude2, double longitude2)
         {
-            double latitudeDifferenceRadians = ToRadians((double)(latitude2 - latitude1));
-            double longitudeDifferenceRadians = ToRadians((double)(longitude2 - longitude1));
+            // Convert degrees to radians
+            double latitudeDifferenceRadians = ToRadians(latitude2 - latitude1);
+            double longitudeDifferenceRadians = ToRadians(longitude2 - longitude1);
 
-            double latitude1Radians = ToRadians((double)latitude1);
-            double latitude2Radians = ToRadians((double)latitude2);
+            latitude1 = ToRadians(latitude1);
+            latitude2 = ToRadians(latitude2);
 
-            double haversineOfLat = Math.Sin(latitudeDifferenceRadians / 2) * Math.Sin(latitudeDifferenceRadians / 2);
-            double haversineOfLon = Math.Sin(longitudeDifferenceRadians / 2) * Math.Sin(longitudeDifferenceRadians / 2);
+            double haversine = Math.Pow(Math.Sin(latitudeDifferenceRadians / 2), 2) +
+                               Math.Cos(latitude1) * Math.Cos(latitude2) *
+                               Math.Pow(Math.Sin(longitudeDifferenceRadians / 2), 2);
 
-            double centralAngle = haversineOfLat + Math.Cos(latitude1Radians) * Math.Cos(latitude2Radians) * haversineOfLon;
-            double centralAngleInRadians = 2 * Math.Atan2(Math.Sqrt(centralAngle), Math.Sqrt(1 - centralAngle));
+            double centralAngle = 2 * Math.Asin(Math.Sqrt(haversine));
 
-            double distance = EarthRadiusKm * centralAngleInRadians;
-            return distance;
+            return EarthRadiusKm * centralAngle;
         }
 
         private static double ToRadians(double degrees)
