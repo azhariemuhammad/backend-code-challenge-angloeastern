@@ -66,6 +66,18 @@ namespace ShipManagement.Controllers
             await userShipService.UpdateShipVelocityAsync(shipCode, request);
             return Ok(new { message = "Ship velocity updated successfully." });
         }
+        [HttpGet("ships/unassigned")]
+        [SwaggerOperation(
+            Summary = "Retrieves unassigned ships.",
+            Description = "Returns ships that are not currently assigned to any user."
+        )]
+        [ProducesResponseType(typeof(IEnumerable<ShipResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<IEnumerable<ShipResponse>>> GetUnassignedShipAsync()
+        {
+            var ships = await userShipService.GetUnassignedShipAsync();
+            return Ok(ships);
+        }
 
         [HttpGet("{shipCode}/closest-port")]
         [SwaggerOperation(

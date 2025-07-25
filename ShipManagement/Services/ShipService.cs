@@ -120,28 +120,20 @@ namespace ShipManagement.Services
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<ShipDetailDto?> GetShipWithUsersAsync(int id)
+        public async Task<IEnumerable<ShipResponse>> GetUnassignedShipAsync()
         {
             return await context.Ships
-                .Where(s => s.Id == id)
-                .Select(s => new ShipDetailDto
+                .Where(s => !s.Users.Any())
+                .Select(s => new ShipResponse
                 {
                     Id = s.Id,
                     ShipCode = s.ShipCode,
                     Name = s.Name,
                     Velocity = s.Velocity,
                     Latitude = s.Latitude,
-                    Longitude = s.Longitude,
-                    AssignedUsers = s.Users.Select(u => new UserDetailDto
-                    {
-                        Id = u.Id,
-                        Name = u.Name,
-                        Role = u.Role,
-                        CreatedAt = u.CreatedAt,
-                        UpdatedAt = u.UpdatedAt
-                    }).ToList()
+                    Longitude = s.Longitude
                 })
-                .FirstOrDefaultAsync();
+                .ToListAsync();
         }
 
         public async Task<IEnumerable<ShipBasicDto>> GetUnAssignedShipsAsync()

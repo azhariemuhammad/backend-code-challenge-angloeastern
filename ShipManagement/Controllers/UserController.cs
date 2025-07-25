@@ -31,7 +31,7 @@ namespace ShipManagement.Controllers
             [FromBody][ValidShipCodes][SwaggerParameter(Description = "A list of valid ship codes to assign to the user. Each code must correspond to an existing ship.")] List<string> shipCodes)
         {
             await userService.AssignShipsToUserSync(id, shipCodes);
-            return Ok(new { message = "User's ships updated successfully." });
+            return Ok(new { message = "User's ships assigned successfully." });
 
         }
 
@@ -83,6 +83,7 @@ namespace ShipManagement.Controllers
 
             return Ok(user);
         }
+
         [HttpDelete("{id}")]
         [SwaggerOperation(
             Summary = "Deletes a user.",

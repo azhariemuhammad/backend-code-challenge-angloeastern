@@ -8,6 +8,7 @@ You can run this project either using Docker or locally with the .NET CLI.
 ### Option 1: Run with Docker
 
 1. Make sure you have [Docker](https://www.docker.com/products/docker-desktop) installed.
+
 2. In the project root, run:
 
    ```sh
@@ -27,13 +28,15 @@ You can run this project either using Docker or locally with the .NET CLI.
    ```sh
    dotnet build
    ```
+   
 
 6. Run the API:
 
    ```sh
    dotnet run --project ShipManagement/ShipManagement.csproj
    ```
-7. The API will be available at 'http://localhost:8080/api/'
+7. The API will be available at 'http://localhost:5012/api/users'
+
 
 
 ### Running Tests
