@@ -10,6 +10,7 @@ global using ShipManagement.Interfaces;
 global using ShipManagement.Models.Request;
 global using ShipManagement.Models.Responses;
 global using ShipManagement.Services;
+global using ShipManagement.Configuration;
 global using Xunit;
 global using System.ComponentModel.DataAnnotations;
 global using ShipManagement.Models.Attributes;

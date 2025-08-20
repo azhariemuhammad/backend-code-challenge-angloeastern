@@ -8,5 +8,6 @@ namespace ShipManagement.Models.Responses
         public required decimal Velocity { get; set; }
         public required decimal Latitude { get; set; }
         public required decimal Longitude { get; set; }
+        public int Heading { get; set; } = 0;
     }
 }

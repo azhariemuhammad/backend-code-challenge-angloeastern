@@ -156,3 +156,4 @@
 /Users/azharie/Documents/sandbox/backend-code-challenge-angloeastern/ShipManagement/bin/Debug/net9.0/Moq.dll
 /Users/azharie/Documents/sandbox/backend-code-challenge-angloeastern/ShipManagement/bin/Debug/net9.0/xunit.abstractions.dll
 /Users/azharie/Documents/sandbox/backend-code-challenge-angloeastern/ShipManagement/bin/Debug/net9.0/xunit.core.dll
+/Users/azharie/Documents/sandbox/backend-code-challenge-angloeastern/ShipManagement/bin/Debug/net9.0/RabbitMQ.Client.dll

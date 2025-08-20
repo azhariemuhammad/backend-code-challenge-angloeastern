@@ -1,5 +1,4 @@
-using Microsoft.EntityFrameworkCore;
-using ShipManagement.Data;
+using ShipManagement.Configuration;
 using ShipManagement.Middlewares;
 using ShipManagement.Services;
 
@@ -31,7 +30,9 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddScoped<IShipService, ShipService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IRedisCacheService, RedisService>();
-
+builder.Services.Configure<RabbitMQOptions>(builder.Configuration.GetSection("RabbitMQ"));
+builder.Services.AddSingleton<IMessagePublisher, MessagePublisher>();
+builder.Services.AddHostedService<ShipSimulatorService>();
 
 var app = builder.Build();
 
@@ -47,6 +48,20 @@ using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<ShipManagementContext>();
     context.Database.Migrate();
+}
+
+using (var scope = app.Services.CreateScope())
+{
+    try
+    {
+        var publisher = scope.ServiceProvider.GetRequiredService<IMessagePublisher>();
+        Console.WriteLine("RabbitMQ publisher initialized successfully.");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Error initializing RabbitMQ publisher: {ex.Message}");
+        // Handle or log the exception as needed
+    }
 }
 
 app.Run();

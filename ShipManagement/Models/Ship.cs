@@ -13,6 +13,9 @@ namespace ShipManagement.Models
         public decimal Velocity { get; set; }
         public decimal Latitude { get; set; }
         public decimal Longitude { get; set; }
+
+        [Required, Range(0, 360)]
+        public int Heading { get; set; } = 0;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 

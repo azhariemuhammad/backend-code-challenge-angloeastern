@@ -9,6 +9,8 @@ global using ShipManagement.Models.DTOs;
 global using ShipManagement.Models.Filters;
 global using ShipManagement.Models.Request;
 global using ShipManagement.Models.Responses;
+global using ShipManagement.Models.Messages;
+global using ShipManagement.Services.Messaging;
 global using ShipManagement.Exceptions;
 global using Swashbuckle.AspNetCore.Annotations;
 global using System.ComponentModel.DataAnnotations;
